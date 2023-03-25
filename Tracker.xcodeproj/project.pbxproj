@@ -16,6 +16,11 @@
 		A3122B1229CCC5DC00C08EEA /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3122B1129CCC5DC00C08EEA /* SupplementaryView.swift */; };
 		A334C62229CF040700484BAA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62129CF040700484BAA /* TabBarController.swift */; };
 		A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62329CF09D000484BAA /* StatisticViewController.swift */; };
+		A334C62629CF179B00484BAA /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62529CF179B00484BAA /* UIColor+Extension.swift */; };
+		A334C62E29CF1AAB00484BAA /* YS-Display-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A334C62C29CF1AAB00484BAA /* YS-Display-Medium.ttf */; };
+		A334C62F29CF1AAB00484BAA /* YS-Display-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A334C62D29CF1AAB00484BAA /* YS-Display-Bold.ttf */; };
+		A334C63129CF1C0800484BAA /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C63029CF1C0800484BAA /* UIFont+Extensions.swift */; };
+		A334C63329CF1D6300484BAA /* SF-Pro-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = A334C63229CF1D6300484BAA /* SF-Pro-Text-Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,11 +30,16 @@
 		A3122AFF29CC596400C08EEA /* TrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerViewController.swift; sourceTree = "<group>"; };
 		A3122B0429CC596600C08EEA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A3122B0729CC596600C08EEA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A3122B0929CC596600C08EEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A3122B0929CC596600C08EEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Tracker/Supporting Files/Resources/Info.plist"; sourceTree = SOURCE_ROOT; };
 		A3122B0F29CC8AB400C08EEA /* LetterCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterCollectionViewCell.swift; sourceTree = "<group>"; };
 		A3122B1129CCC5DC00C08EEA /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		A334C62129CF040700484BAA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A334C62329CF09D000484BAA /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
+		A334C62529CF179B00484BAA /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
+		A334C62C29CF1AAB00484BAA /* YS-Display-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "YS-Display-Medium.ttf"; path = "Tracker/Supporting Files/Resources/YS-Display-Medium.ttf"; sourceTree = SOURCE_ROOT; };
+		A334C62D29CF1AAB00484BAA /* YS-Display-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "YS-Display-Bold.ttf"; path = "Tracker/Supporting Files/Resources/YS-Display-Bold.ttf"; sourceTree = SOURCE_ROOT; };
+		A334C63029CF1C0800484BAA /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		A334C63229CF1D6300484BAA /* SF-Pro-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Text-Regular.otf"; path = "Tracker/Supporting Files/Resources/SF-Pro-Text-Regular.otf"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,18 +72,63 @@
 		A3122AFA29CC596400C08EEA /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				A3122AFB29CC596400C08EEA /* AppDelegate.swift */,
-				A3122AFD29CC596400C08EEA /* SceneDelegate.swift */,
-				A3122AFF29CC596400C08EEA /* TrackerViewController.swift */,
-				A3122B1129CCC5DC00C08EEA /* SupplementaryView.swift */,
-				A3122B0F29CC8AB400C08EEA /* LetterCollectionViewCell.swift */,
-				A3122B0429CC596600C08EEA /* Assets.xcassets */,
-				A3122B0629CC596600C08EEA /* LaunchScreen.storyboard */,
-				A334C62129CF040700484BAA /* TabBarController.swift */,
-				A334C62329CF09D000484BAA /* StatisticViewController.swift */,
-				A3122B0929CC596600C08EEA /* Info.plist */,
+				A334C62A29CF1A4100484BAA /* Controllers */,
+				A334C62B29CF1A5200484BAA /* Views */,
+				A334C62829CF1A1100484BAA /* Supporting Files */,
 			);
 			path = Tracker;
+			sourceTree = "<group>";
+		};
+		A334C62729CF19DB00484BAA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A334C62D29CF1AAB00484BAA /* YS-Display-Bold.ttf */,
+				A334C62C29CF1AAB00484BAA /* YS-Display-Medium.ttf */,
+				A334C63229CF1D6300484BAA /* SF-Pro-Text-Regular.otf */,
+				A3122B0429CC596600C08EEA /* Assets.xcassets */,
+				A3122B0929CC596600C08EEA /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A334C62829CF1A1100484BAA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A3122AFB29CC596400C08EEA /* AppDelegate.swift */,
+				A3122AFD29CC596400C08EEA /* SceneDelegate.swift */,
+				A3122B0629CC596600C08EEA /* LaunchScreen.storyboard */,
+				A334C62929CF1A2200484BAA /* Helpers */,
+				A334C62729CF19DB00484BAA /* Resources */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A334C62929CF1A2200484BAA /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A334C62529CF179B00484BAA /* UIColor+Extension.swift */,
+				A334C63029CF1C0800484BAA /* UIFont+Extensions.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		A334C62A29CF1A4100484BAA /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A334C62129CF040700484BAA /* TabBarController.swift */,
+				A3122AFF29CC596400C08EEA /* TrackerViewController.swift */,
+				A334C62329CF09D000484BAA /* StatisticViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		A334C62B29CF1A5200484BAA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A3122B1129CCC5DC00C08EEA /* SupplementaryView.swift */,
+				A3122B0F29CC8AB400C08EEA /* LetterCollectionViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -135,7 +190,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3122B0829CC596600C08EEA /* LaunchScreen.storyboard in Resources */,
+				A334C63329CF1D6300484BAA /* SF-Pro-Text-Regular.otf in Resources */,
+				A334C62E29CF1AAB00484BAA /* YS-Display-Medium.ttf in Resources */,
 				A3122B0529CC596600C08EEA /* Assets.xcassets in Resources */,
+				A334C62F29CF1AAB00484BAA /* YS-Display-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +211,8 @@
 				A334C62229CF040700484BAA /* TabBarController.swift in Sources */,
 				A3122B1229CCC5DC00C08EEA /* SupplementaryView.swift in Sources */,
 				A3122AFE29CC596400C08EEA /* SceneDelegate.swift in Sources */,
+				A334C63129CF1C0800484BAA /* UIFont+Extensions.swift in Sources */,
+				A334C62629CF179B00484BAA /* UIColor+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +280,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "/Users/dmitriimartynov/Development/Practicum/Tracker/Tracker/Supporting Files/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -274,6 +335,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "/Users/dmitriimartynov/Development/Practicum/Tracker/Tracker/Supporting Files/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -293,7 +355,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SDLP5C8V69;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Tracker/Info.plist;
+				INFOPLIST_FILE = "Tracker/Supporting Files/Resources/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -324,7 +386,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SDLP5C8V69;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Tracker/Info.plist;
+				INFOPLIST_FILE = "Tracker/Supporting Files/Resources/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
