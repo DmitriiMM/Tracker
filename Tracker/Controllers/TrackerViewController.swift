@@ -1,6 +1,11 @@
 import UIKit
 
 class TrackerViewController: UIViewController {
+    let currentDate = Date()
+    var trackCards = ["a", "b", "c", "d", "e", "f", "g"]
+    var sectionTwotrackCards = ["aaa", "bbb", "ccc", "ddd", "eee", "fff", "ggg"]
+    
+    
     private lazy var topBar: UIView = {
         let view = UIView()
         view.backgroundColor = .ypWhite
@@ -10,7 +15,7 @@ class TrackerViewController: UIViewController {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 34, weight: .bold) //UIFont.appFont(.bold, withSize: 34)
+        label.font = UIFont.appFont(.bold, withSize: 34)
         label.text = "Трекеры"
         label.textColor = .ypBlack
         
@@ -34,14 +39,13 @@ class TrackerViewController: UIViewController {
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
         
-        let today = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
-        let formattedDate = dateFormatter.string(from: today)
+        let formattedDate = dateFormatter.string(from: currentDate)
         
         button.setTitle(formattedDate, for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17) //UIFont(name: "SF-Pro-Text-Regular", size: 30) //UIFont.appFont(.regular, withSize: 17)
+        button.titleLabel?.font = UIFont.appFont(.regular, withSize: 17)
         
         return button
     }()
@@ -54,28 +58,31 @@ class TrackerViewController: UIViewController {
         return search
     }()
     
-//    private lazy var collectionView: UICollectionView = {
-//        let collection = UICollectionView()
-//        collection.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-//        collection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-//        collection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
-//        collection.delegate = self
-//        collection.dataSource = self
-//        collection.backgroundColor = .ypWhite
-//
-//        collection.allowsMultipleSelection = false
-//
-//        return collectionView
-//    }()
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout()
+        )
+        collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell().identifier)
+        
+        return collectionView
+    }()
+   
+    private lazy var emptyCollectionImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "star")
+//        imageView.isHidden = true
+        
+        return imageView
+    }()
     
-    private lazy var emptyTableLabel: UILabel = {
+    private lazy var emptyCollectionLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(descriptor: UIFontDescriptor(name: "SFProText-Regular", size: 0), size: 16)
-        label.text = "Таких контактов нет, выберите другие фильтры"
-        label.textColor = .white
-        label.numberOfLines = 2
+        label.font = UIFont.appFont(.medium, withSize: 12)
+        label.text = "Что будем отслеживать?"
+        label.textColor = .ypBlack
         label.textAlignment = .center
-        label.isHidden = true
+//        label.isHidden = true
         
         return label
     }()
@@ -85,21 +92,29 @@ class TrackerViewController: UIViewController {
         
         view.backgroundColor = .ypWhite
         
+        
+        collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+
+        collectionView.backgroundColor = .ypWhite
+        collectionView.allowsMultipleSelection = false
+        
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
         addSubviews()
         addConstraints()
     }
     
     @objc private func addTrackerButtonTapped() {
-//        let filterVC = FilterViewController()
-//        filterVC.delegate = self
-//        filterVC.filterArray = filterSettings
-//        present(filterVC, animated: true)
+        let typeNewTrackerVC = TypeNewTrackerViewController()
+        present(typeNewTrackerVC, animated: true)
     }
     
     func addSubviews() {
         view.addSubview(topBar)
-//        view.addSubview(collectionView)
-        view.addSubview(emptyTableLabel)
+        view.addSubview(emptyCollectionImageView)
+        view.addSubview(emptyCollectionLabel)
+        view.addSubview(collectionView)
         topBar.addSubview(titleLabel)
         topBar.addSubview(addTrackerButton)
         topBar.addSubview(datePickerButton)
@@ -108,8 +123,9 @@ class TrackerViewController: UIViewController {
     
     func addConstraints() {
         topBar.translatesAutoresizingMaskIntoConstraints = false
-//        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        emptyTableLabel.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        emptyCollectionImageView.translatesAutoresizingMaskIntoConstraints = false
+        emptyCollectionLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         addTrackerButton.translatesAutoresizingMaskIntoConstraints = false
         datePickerButton.translatesAutoresizingMaskIntoConstraints = false
@@ -136,27 +152,35 @@ class TrackerViewController: UIViewController {
             datePickerButton.trailingAnchor.constraint(equalTo: searchField.trailingAnchor),
             datePickerButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             datePickerButton.topAnchor.constraint(equalTo: topBar.topAnchor, constant: 91),
-            datePickerButton.widthAnchor.constraint(equalToConstant: 80)
+            datePickerButton.widthAnchor.constraint(equalToConstant: 80),
             
-//            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-//            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-//            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            emptyCollectionImageView.centerYAnchor.constraint(equalTo: topBar.bottomAnchor, constant: (view.safeAreaLayoutGuide.layoutFrame.height - topBar.frame.height)/3),
+            emptyCollectionImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyCollectionImageView.heightAnchor.constraint(equalToConstant: 80),
+            emptyCollectionImageView.widthAnchor.constraint(equalToConstant: 80),
+            
+            emptyCollectionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyCollectionLabel.topAnchor.constraint(equalTo: emptyCollectionImageView.bottomAnchor, constant: 8),
+            
+            collectionView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 }
 
-//extension TrackerViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//           let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+extension TrackerViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+           let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
 //           cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 32)
-//       }
-//
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+       }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
 //        cell?.titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-//    }
-//
+    }
+    
 //    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 //            guard indexPaths.count > 0 else {
 //                return nil
@@ -175,73 +199,87 @@ class TrackerViewController: UIViewController {
 //                ])
 //            })
 //        }
-//}
-//
-//extension TrackerViewController: UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        0
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-//
-//        guard let collectionCell = cell as? EmojiCollectionViewCell else { return UICollectionViewCell() }
-//
-////        collectionCell.titleLabel.text = letters[indexPath.row]
-//        return cell
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-//        var id: String
-//        switch kind {
-//        case UICollectionView.elementKindSectionHeader:
-//            id = "header"
-//        case UICollectionView.elementKindSectionFooter:
-//            id = "footer"
-//        default:
-//            id = ""
-//        }
-//
-//        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView
-//        guard let view = view else { return UICollectionReusableView() }
-//        view.titleLabel.text = "Здесь находится Supplementary view"
-//
-//        return view
-//    }
-//}
-//
-//extension TrackerViewController: UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//
-//        return headerView.systemLayoutSizeFitting(
-//            CGSize(
-//                width: collectionView.frame.width,
-//                height: UIView.layoutFittingExpandedSize.height),
-//            withHorizontalFittingPriority: .required,
-//            verticalFittingPriority: .fittingSizeLevel
-//        )
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let footerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter, at: indexPath)
-//
-//        return footerView.systemLayoutSizeFitting(
-//            CGSize(
-//                width: collectionView.frame.width,
-//                height: UIView.layoutFittingExpandedSize.height),
-//            withHorizontalFittingPriority: .required,
-//            verticalFittingPriority: .fittingSizeLevel
-//        )
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: collectionView.bounds.width / 2, height: 50)
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//            return 0
-//        }
-//}
+}
+
+extension TrackerViewController: UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch section {
+        case 0: return trackCards.count
+        case 1: return sectionTwotrackCards.count
+        default: return 0
+        }
+        
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell().identifier, for: indexPath)
+        
+        guard let collectionCell = cell as? TrackerCollectionViewCell else { return UICollectionViewCell() }
+        
+        switch indexPath.section {
+        case 0:
+            collectionCell.trackCardLabel.text = trackCards[indexPath.row]
+        case 1:
+            collectionCell.trackCardLabel.text = sectionTwotrackCards[indexPath.row]
+        default:
+            break
+        }
+        
+        
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? SupplementaryView
+        guard let view = view else { return UICollectionReusableView() }
+        
+        switch indexPath.section {
+        case 0:
+            view.titleLabel.text = "Категория"
+        case 1:
+            view.titleLabel.text = "Вторая Категория"
+        default:
+            break
+        }
+        
+
+        return view
+    }
+}
+
+extension TrackerViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+
+        return headerView.systemLayoutSizeFitting(
+            CGSize(
+                width: collectionView.frame.width,
+                height: UIView.layoutFittingExpandedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.bounds.width / 2 - 16 - 4.5, height: 132)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 9
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 16
+    }
+}
