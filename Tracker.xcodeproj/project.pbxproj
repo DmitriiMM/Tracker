@@ -23,6 +23,8 @@
 		A334C63329CF1D6300484BAA /* SF-Pro-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = A334C63229CF1D6300484BAA /* SF-Pro-Text-Regular.otf */; };
 		A336A68A29D2062E00455A29 /* SuplementeryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A336A68929D2062E00455A29 /* SuplementeryCollectionViewCell.swift */; };
 		A33894A429D490E1003A8A6A /* CategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33894A329D490E0003A8A6A /* CategoriesViewController.swift */; };
+		A33894A629D498F6003A8A6A /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33894A529D498F6003A8A6A /* NewCategoryViewController.swift */; };
+		A33894A829D5FCF6003A8A6A /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33894A729D5FCF6003A8A6A /* ScheduleViewController.swift */; };
 		A34EB28429D09D0F00A0E475 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28329D09D0F00A0E475 /* Tracker.swift */; };
 		A34EB28629D09E8200A0E475 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28529D09E8200A0E475 /* TrackerCategory.swift */; };
 		A34EB28829D09EE200A0E475 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28729D09EE200A0E475 /* TrackerRecord.swift */; };
@@ -50,6 +52,8 @@
 		A334C63229CF1D6300484BAA /* SF-Pro-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SF-Pro-Text-Regular.otf"; path = "Tracker/Supporting Files/Resources/SF-Pro-Text-Regular.otf"; sourceTree = SOURCE_ROOT; };
 		A336A68929D2062E00455A29 /* SuplementeryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuplementeryCollectionViewCell.swift; sourceTree = "<group>"; };
 		A33894A329D490E0003A8A6A /* CategoriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewController.swift; sourceTree = "<group>"; };
+		A33894A529D498F6003A8A6A /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
+		A33894A729D5FCF6003A8A6A /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		A34EB28329D09D0F00A0E475 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		A34EB28529D09E8200A0E475 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		A34EB28729D09EE200A0E475 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 				A34EB28929D0AAA400A0E475 /* TypeNewTrackerViewController.swift */,
 				A34EB28B29D0BC6E00A0E475 /* NewTrackerViewController.swift */,
 				A33894A329D490E0003A8A6A /* CategoriesViewController.swift */,
+				A33894A529D498F6003A8A6A /* NewCategoryViewController.swift */,
+				A33894A729D5FCF6003A8A6A /* ScheduleViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -237,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3122B1029CC8AB400C08EEA /* TrackerCollectionViewCell.swift in Sources */,
+				A33894A629D498F6003A8A6A /* NewCategoryViewController.swift in Sources */,
 				A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */,
 				A34EB28C29D0BC6E00A0E475 /* NewTrackerViewController.swift in Sources */,
 				A336A68A29D2062E00455A29 /* SuplementeryCollectionViewCell.swift in Sources */,
@@ -246,6 +253,7 @@
 				A334C62229CF040700484BAA /* TabBarController.swift in Sources */,
 				A34EB28E29D0E92900A0E475 /* SuplementaryCollection.swift in Sources */,
 				A34EB28829D09EE200A0E475 /* TrackerRecord.swift in Sources */,
+				A33894A829D5FCF6003A8A6A /* ScheduleViewController.swift in Sources */,
 				A3122B1229CCC5DC00C08EEA /* SupplementaryView.swift in Sources */,
 				A34EB28429D09D0F00A0E475 /* Tracker.swift in Sources */,
 				A3122AFE29CC596400C08EEA /* SceneDelegate.swift in Sources */,

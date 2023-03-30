@@ -19,17 +19,7 @@ final class SupplementaryCollection: NSObject {
         for i in 1...18 {
             colors.append(UIColor(named: "Color\(i)") ?? .red)
         }
-        print("❤️❤️❤️\(colors)")
     }
-    
-//    private let colors: [UIColor] = [
-//        UIColor(named: "Color1")!, UIColor(named: "Color2")!, UIColor(named: "Color3")!,
-//        UIColor(named: "Color4")!, UIColor(named: "Color5")!, UIColor(named: "Color6")!,
-//        UIColor(named: "Color7")!, UIColor(named: "Color8")!, UIColor(named: "Color9")!,
-//        UIColor(named: "Color10")!, UIColor(named: "Color11")!, UIColor(named: "Color12")!,
-//        UIColor(named: "Color13")!, UIColor(named: "Color14")!, UIColor(named: "Color15")!,
-//        UIColor(named: "Color16")!, UIColor(named: "Color17")!, UIColor(named: "Color18")!
-//    ]
 }
     
 extension SupplementaryCollection: UICollectionViewDataSource {
@@ -56,13 +46,10 @@ extension SupplementaryCollection: UICollectionViewDataSource {
         case 1:
             collectionCell.layer.cornerRadius = 13
             collectionCell.label.text = ""
-           
             collectionCell.contentView.backgroundColor = colors[indexPath.row]
-            
         default:
             break
         }
-        
         
         collectionCell.prepareForReuse()
         
@@ -129,13 +116,16 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
             
             switch indexPath.section {
             case 0:
-                for cell in collectionView.visibleCells {
+                for item in 0..<collectionView.numberOfItems(inSection: 0) {
+                    guard let cell = collectionView.cellForItem(at: IndexPath(row: item, section: 0)) else { return }
                     cell.backgroundColor = .clear
                 }
                 
                 cell.backgroundColor = .ypLightGray
+                
             case 1:
-                for cell in collectionView.visibleCells {
+                for item in 0..<collectionView.numberOfItems(inSection: 1) {
+                    guard let cell = collectionView.cellForItem(at: IndexPath(row: item, section: 1)) else { return }
                     cell.backgroundColor = .clear
                     cell.layer.borderWidth = 0
                 }

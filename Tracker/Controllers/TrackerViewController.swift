@@ -71,7 +71,6 @@ class TrackerViewController: UIViewController {
     private lazy var emptyCollectionImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "star")
-//        imageView.isHidden = true
         
         return imageView
     }()
@@ -82,7 +81,6 @@ class TrackerViewController: UIViewController {
         label.text = "Что будем отслеживать?"
         label.textColor = .ypBlack
         label.textAlignment = .center
-//        label.isHidden = true
         
         return label
     }()

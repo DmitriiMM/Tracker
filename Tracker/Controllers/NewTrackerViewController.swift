@@ -1,6 +1,10 @@
 import UIKit
 
 class NewTrackerViewController: UIViewController {
+    var categories = Set<String>()
+    var currentCategory: String?
+    var currentSchedule: [String]?
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
@@ -12,8 +16,6 @@ class NewTrackerViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
-//        scroll.showsVerticalScrollIndicator = true
-//        scroll.isDirectionalLockEnabled = true
         scroll.backgroundColor = .ypWhite
         scroll.frame = view.bounds
         
@@ -36,7 +38,9 @@ class NewTrackerViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .ypBackground
@@ -92,10 +96,8 @@ class NewTrackerViewController: UIViewController {
         
         collectionView.register(SuplementaryCollectionCell.self, forCellWithReuseIdentifier: SuplementaryCollectionCell().identifier)
         
-       
         collectionView.delegate = helper
         collectionView.dataSource = helper
-        
         
         view.backgroundColor = .ypWhite
         
@@ -157,7 +159,6 @@ class NewTrackerViewController: UIViewController {
             
             createButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor),
             
-        
             cancelButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: -4),
             cancelButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -34),
@@ -174,11 +175,14 @@ class NewTrackerViewController: UIViewController {
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
-        case 0:
+        case 0: // "Категория"
             let categoriesVC = CategoriesViewController()
+            categoriesVC.delegate = self
             present(categoriesVC, animated: true)
-        case 1:
-            print("todo")
+        case 1: // "Расписание"
+            let scheduleVC = ScheduleViewController()
+            scheduleVC.delegate = self
+            present(scheduleVC, animated: true)
         default: break
         }
     }
@@ -190,16 +194,32 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else { return UITableViewCell() }
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         cell.backgroundColor = .clear
+        cell.detailTextLabel?.font = .appFont(.regular, withSize: 17)
+        cell.detailTextLabel?.textColor = .ypGray
         
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "Категория"
+            cell.detailTextLabel?.text = currentCategory
+            
         case 1:
             cell.textLabel?.text = "Расписание"
+            if currentSchedule?.count == 7 {
+                cell.detailTextLabel?.text = "Каждый день"
+            } else {
+                let sortedDays = currentSchedule?.sorted { first, second in
+                    let orderedDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+                    return orderedDays.firstIndex(of: first)! < orderedDays.firstIndex(of: second)!
+                }
+                
+                let days = sortedDays?.joined(separator: ", ")
+                cell.detailTextLabel?.text = days
+            }
+            
         default:
             break
         }
@@ -209,5 +229,27 @@ extension NewTrackerViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+}
+
+extension NewTrackerViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
+}
+
+extension NewTrackerViewController: CategoriesViewControllerDelegate {
+    func addCategoryForTracker(category: String) {
+        currentCategory = category
+        tableView.reloadData()
+    }
+}
+
+extension NewTrackerViewController: ScheduleViewControllerDelegate {
+    func addScheduleForTracker(_ schedule: [String]) {
+        currentSchedule = schedule
+        tableView.reloadData()
     }
 }
