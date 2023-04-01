@@ -1,11 +1,7 @@
 import UIKit
 
-protocol NewCategoryViewControllerDelegate: AnyObject {
-    func reloadTableView(category: String)
-}
-
 class NewCategoryViewController: UIViewController {
-    weak var delegate: NewCategoryViewControllerDelegate?
+    weak var delegateTransition: ScreenTransitionProtocol?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -25,6 +21,7 @@ class NewCategoryViewController: UIViewController {
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.clipsToBounds = true
+        textField.delegate = self
         
         return textField
     }()
@@ -56,7 +53,7 @@ class NewCategoryViewController: UIViewController {
         if textField.hasText {
             if let category = textField.text {
                 dismiss(animated: true) {
-                    self.delegate?.reloadTableView(category: category)
+                    self.delegateTransition?.onTransition(value: category, for: "category")
                 }
             }
         }
@@ -75,7 +72,7 @@ class NewCategoryViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
             
             textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 38),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),

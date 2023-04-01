@@ -31,6 +31,7 @@
 		A34EB28A29D0AAA400A0E475 /* TypeNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28929D0AAA400A0E475 /* TypeNewTrackerViewController.swift */; };
 		A34EB28C29D0BC6E00A0E475 /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28B29D0BC6E00A0E475 /* NewTrackerViewController.swift */; };
 		A34EB28E29D0E92900A0E475 /* SuplementaryCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28D29D0E92900A0E475 /* SuplementaryCollection.swift */; };
+		A3C7B3FF29D74DDA0033F251 /* ScreenTransitionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		A34EB28929D0AAA400A0E475 /* TypeNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeNewTrackerViewController.swift; sourceTree = "<group>"; };
 		A34EB28B29D0BC6E00A0E475 /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		A34EB28D29D0E92900A0E475 /* SuplementaryCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuplementaryCollection.swift; sourceTree = "<group>"; };
+		A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTransitionProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 			children = (
 				A334C62529CF179B00484BAA /* UIColor+Extension.swift */,
 				A334C63029CF1C0800484BAA /* UIFont+Extensions.swift */,
+				A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -242,6 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3C7B3FF29D74DDA0033F251 /* ScreenTransitionProtocol.swift in Sources */,
 				A3122B1029CC8AB400C08EEA /* TrackerCollectionViewCell.swift in Sources */,
 				A33894A629D498F6003A8A6A /* NewCategoryViewController.swift in Sources */,
 				A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */,

@@ -1,9 +1,9 @@
 import UIKit
 
 struct Tracker {
-    let trackerId: String
-    let trackerColor: UIColor
-    let trackerEmoji: String
+    let trackerId: UUID
     let trackerText: String
-    let trackerCounter: String
+    let trackerEmoji: String
+    let trackerColor: UIColor
+    let trackerSchedule: [String]?
 }

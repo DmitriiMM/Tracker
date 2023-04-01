@@ -1,13 +1,9 @@
 import UIKit
 
-protocol CategoriesViewControllerDelegate: AnyObject {
-    func addCategoryForTracker(category: String)
-}
-
 class CategoriesViewController: UIViewController {
-    var categories: [String] = []
-    var heightTableView: Int = -1
-    weak var delegate: CategoriesViewControllerDelegate?
+    private var heightTableView: Int = -1
+    weak var delegateTransition: ScreenTransitionProtocol?
+    var categories: [String]?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -38,7 +34,7 @@ class CategoriesViewController: UIViewController {
         return label
     }()
     
-    lazy var tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
@@ -68,6 +64,12 @@ class CategoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if categories?.count != 0 {
+            heightTableView = categories!.count * 75 - 1
+            emptyCategoryLabel.isHidden = true
+            emptyCategoryImageView.isHidden = true
+        }
+        
         view.backgroundColor = .ypWhite
         
         addSubviews()
@@ -76,7 +78,7 @@ class CategoriesViewController: UIViewController {
     
     @objc private func addCategoryButtonTapped() {
         let newCategoryVC = NewCategoryViewController()
-        newCategoryVC.delegate = self
+        newCategoryVC.delegateTransition = self
         present(newCategoryVC, animated: true)
     }
     
@@ -97,7 +99,7 @@ class CategoriesViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
             
             emptyCategoryLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyCategoryLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -110,7 +112,7 @@ class CategoriesViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 73),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant:0),
+            tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView)),
 
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -125,14 +127,16 @@ extension CategoriesViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         cell.accessoryType = .checkmark
         dismiss(animated: true) {
-            self.delegate?.addCategoryForTracker(category: cell.textLabel?.text ?? "Category")
+            self.delegateTransition?.onTransition(value: cell.textLabel?.text, for: "category")
+            self.delegateTransition?.onTransition(value: self.categories, for: "categories")
         }
     }
 }
 
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        
+        return categories?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -140,7 +144,7 @@ extension CategoriesViewController: UITableViewDataSource {
        
         cell.backgroundColor = .ypBackground
         
-        cell.textLabel?.text = categories[indexPath.row]
+        cell.textLabel?.text = categories?[indexPath.row]
         cell.textLabel?.font = UIFont.appFont(.regular, withSize: 17)
         
         return cell
@@ -151,20 +155,40 @@ extension CategoriesViewController: UITableViewDataSource {
     }
 }
 
-extension CategoriesViewController: NewCategoryViewControllerDelegate {
-    func reloadTableView(category: String) {
-        categories.append(category)
-        
-        heightTableView += 75
-        
-        if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
-            heightConstraint.constant = CGFloat(heightTableView)
-            tableView.layoutIfNeeded()
+extension CategoriesViewController: ScreenTransitionProtocol {
+    func onTransition<T>(value: T, for key: String) {
+        if let stringValue = value as? String {
+            if let notNilCategories = categories {
+                if !notNilCategories.contains(where: { $0 == stringValue }) {
+                    categories?.append(stringValue)
+                    
+                    heightTableView += 75
+                    
+                    if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
+                        heightConstraint.constant = CGFloat(heightTableView)
+                        tableView.layoutIfNeeded()
+                    }
+                    
+                    emptyCategoryLabel.isHidden = true
+                    emptyCategoryImageView.isHidden = true
+                    
+                    tableView.reloadData()
+                }
+            } else {
+                categories?.append(stringValue)
+                
+                heightTableView += 75
+                
+                if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
+                    heightConstraint.constant = CGFloat(heightTableView)
+                    tableView.layoutIfNeeded()
+                }
+                
+                emptyCategoryLabel.isHidden = true
+                emptyCategoryImageView.isHidden = true
+                
+                tableView.reloadData()
+            }
         }
-        
-        emptyCategoryLabel.isHidden = true
-        emptyCategoryImageView.isHidden = true
-        
-        tableView.reloadData()
     }
 }

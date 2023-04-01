@@ -1,7 +1,7 @@
 import UIKit
 
 final class SupplementaryCollection: NSObject {
-    
+    weak var delegateTransition: ScreenTransitionProtocol?
     private let params = GeometricParams(
         cellCount: 6,
         leftInset: 25,
@@ -112,7 +112,7 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath)  as? SuplementaryCollectionCell  {
             
             switch indexPath.section {
             case 0:
@@ -122,6 +122,7 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
                 }
                 
                 cell.backgroundColor = .ypLightGray
+                delegateTransition?.onTransition(value: cell.label.text, for: "emoji")
                 
             case 1:
                 for item in 0..<collectionView.numberOfItems(inSection: 1) {
@@ -132,6 +133,7 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
                 
                 cell.layer.borderColor = cell.contentView.backgroundColor?.withAlphaComponent(0.3).cgColor
                 cell.layer.borderWidth = 3
+                delegateTransition?.onTransition(value: cell.contentView.backgroundColor, for: "color")
                 
             default:
                 break

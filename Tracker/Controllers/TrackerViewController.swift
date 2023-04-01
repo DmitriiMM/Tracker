@@ -2,9 +2,9 @@ import UIKit
 
 class TrackerViewController: UIViewController {
     let currentDate = Date()
-    var trackCards = ["a", "b", "c", "d", "e", "f", "g"]
-    var sectionTwotrackCards = ["aaa", "bbb", "ccc", "ddd", "eee", "fff", "ggg"]
-    
+    private var trackerByСategory: [TrackerCategory] = []
+    private var newTracker: Tracker?
+    private var titleNewCategory: String?
     
     private lazy var topBar: UIView = {
         let view = UIView()
@@ -54,7 +54,6 @@ class TrackerViewController: UIViewController {
         let search = UISearchTextField()
         search.placeholder = "Поиск"
        
-        
         return search
     }()
     
@@ -90,7 +89,6 @@ class TrackerViewController: UIViewController {
         
         view.backgroundColor = .ypWhite
         
-        
         collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
 
         collectionView.backgroundColor = .ypWhite
@@ -105,10 +103,13 @@ class TrackerViewController: UIViewController {
     
     @objc private func addTrackerButtonTapped() {
         let typeNewTrackerVC = TypeNewTrackerViewController()
+        typeNewTrackerVC.delegateTransition = self
+        let categories = trackerByСategory.map { $0.title }
+        typeNewTrackerVC.categories = categories
         present(typeNewTrackerVC, animated: true)
     }
     
-    func addSubviews() {
+    private func addSubviews() {
         view.addSubview(topBar)
         view.addSubview(emptyCollectionImageView)
         view.addSubview(emptyCollectionLabel)
@@ -119,7 +120,7 @@ class TrackerViewController: UIViewController {
         topBar.addSubview(searchField)
     }
     
-    func addConstraints() {
+    private func addConstraints() {
         topBar.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         emptyCollectionImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -200,18 +201,12 @@ extension TrackerViewController: UICollectionViewDelegate {
 }
 
 extension TrackerViewController: UICollectionViewDataSource {
-    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        2
+        trackerByСategory.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section {
-        case 0: return trackCards.count
-        case 1: return sectionTwotrackCards.count
-        default: return 0
-        }
-        
+        trackerByСategory[section].trackers.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -219,33 +214,20 @@ extension TrackerViewController: UICollectionViewDataSource {
         
         guard let collectionCell = cell as? TrackerCollectionViewCell else { return UICollectionViewCell() }
         
-        switch indexPath.section {
-        case 0:
-            collectionCell.trackCardLabel.text = trackCards[indexPath.row]
-        case 1:
-            collectionCell.trackCardLabel.text = sectionTwotrackCards[indexPath.row]
-        default:
-            break
-        }
-        
+        collectionCell.trackCardLabel.text = trackerByСategory[indexPath.section].trackers[indexPath.row].trackerText
+        collectionCell.cellView.backgroundColor = trackerByСategory[indexPath.section].trackers[indexPath.row].trackerColor
+        collectionCell.plusButton.backgroundColor = trackerByСategory[indexPath.section].trackers[indexPath.row].trackerColor
+        collectionCell.emojiLabel.text = trackerByСategory[indexPath.section].trackers[indexPath.row].trackerEmoji
         
         return cell
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? SupplementaryView
         guard let view = view else { return UICollectionReusableView() }
         
-        switch indexPath.section {
-        case 0:
-            view.titleLabel.text = "Категория"
-        case 1:
-            view.titleLabel.text = "Вторая Категория"
-        default:
-            break
-        }
-        
+        view.titleLabel.text = trackerByСategory[indexPath.section].title
 
         return view
     }
@@ -279,5 +261,39 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 16
+    }
+}
+
+extension TrackerViewController: ScreenTransitionProtocol {
+    func onTransition<T>(value: T, for key: String) {
+        dismiss(animated: true)
+        
+        switch key {
+        case "newTracker":
+            newTracker = value as? Tracker
+        case "newCategory":
+            titleNewCategory = value as? String
+        default:
+            break
+        }
+        
+        addNewTracker()
+    }
+    
+    func addNewTracker() {
+        guard let newTracker = newTracker, let titleNewCategory = titleNewCategory else { return }
+       
+        let newCategory = TrackerCategory(title: titleNewCategory, trackers: [newTracker])
+        
+        if trackerByСategory.contains(where: { $0.title == newCategory.title }) {
+            let index = trackerByСategory.firstIndex(where: { $0.title == newCategory.title })!
+                trackerByСategory[index].trackers.append(contentsOf: newCategory.trackers)
+        } else if !trackerByСategory.contains(where: { $0.title == newCategory.title }) {
+            trackerByСategory.append(newCategory)
+        }
+        
+        collectionView.reloadData()
+        self.newTracker = nil
+        self.titleNewCategory = nil
     }
 }

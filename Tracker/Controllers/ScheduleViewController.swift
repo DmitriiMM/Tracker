@@ -1,13 +1,9 @@
 import UIKit
 
-protocol ScheduleViewControllerDelegate: AnyObject {
-    func addScheduleForTracker(_ schedule: [String])
-}
-
 class ScheduleViewController: UIViewController {
     private let days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    var schedule: [String] = []
-    weak var delegate: ScheduleViewControllerDelegate?
+    private var schedule: [String] = []
+    weak var delegateTransition: ScreenTransitionProtocol?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -18,7 +14,7 @@ class ScheduleViewController: UIViewController {
         return label
     }()
     
-    lazy var tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.delegate = self
@@ -58,7 +54,7 @@ class ScheduleViewController: UIViewController {
     
     @objc private func doneButtonTapped() {
         dismiss(animated: true) {
-            self.delegate?.addScheduleForTracker(self.schedule)
+            self.delegateTransition?.onTransition(value: self.schedule, for: "schedule")
         }
     }
     
@@ -75,7 +71,7 @@ class ScheduleViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
             
             tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 73),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),

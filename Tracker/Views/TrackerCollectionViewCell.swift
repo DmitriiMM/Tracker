@@ -3,7 +3,7 @@ import UIKit
 class TrackerCollectionViewCell: UICollectionViewCell {
     let identifier = "cell"
     
-    private lazy var cellView: UIView = {
+    lazy var cellView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "Color5")
         view.layer.cornerRadius = 16
@@ -12,12 +12,14 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private lazy var emojiLabel: UILabel = {
+    lazy var emojiLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = superview?.backgroundColor?.withAlphaComponent(0.3)
+        label.backgroundColor = .white.withAlphaComponent(0.3)
         label.layer.cornerRadius = 12
         label.clipsToBounds = true
         label.text = "🥑"
+        label.textAlignment = .center
+        label.font = .appFont(.medium, withSize: 13)
         
         return label
     }()
@@ -42,7 +44,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var plusButton: UIButton = {
+    lazy var plusButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "plus")
         button.setImage(image, for: .normal)
@@ -99,6 +101,8 @@ class TrackerCollectionViewCell: UICollectionViewCell {
             trackCardLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 12),
             trackCardLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -12),
             trackCardLabel.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: -12),
+            trackCardLabel.heightAnchor.constraint(equalToConstant: 24),
+            trackCardLabel.widthAnchor.constraint(equalToConstant: 24),
             
             plusButton.topAnchor.constraint(equalTo: cellView.bottomAnchor, constant: 8),
             plusButton.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -12),

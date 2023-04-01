@@ -1,9 +1,22 @@
 import UIKit
 
 class NewTrackerViewController: UIViewController {
-    var categories = Set<String>()
-    var currentCategory: String?
-    var currentSchedule: [String]?
+    private var currentCategory: String?
+    private var currentSchedule: [String]?
+    private var category: String?
+    private var trackerColor: UIColor?
+    private var trackerEmoji: String?
+    private var trackerText: String?
+    private var trackerSchedule: [String]?
+    
+    private var chosenName = false
+    private var chosenCategory = false
+    private var chosenSchedule = false
+    private var chosenEmoji = false
+    private var chosenColor = false
+    
+    weak var delegateTransition: ScreenTransitionProtocol?
+    var categories: [String]?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -32,6 +45,7 @@ class NewTrackerViewController: UIViewController {
         textField.backgroundColor = .ypBackground
         textField.layer.cornerRadius = 16
         textField.clipsToBounds = true
+        textField.delegate = self
         
         return textField
     }()
@@ -83,11 +97,11 @@ class NewTrackerViewController: UIViewController {
     
     private lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-       
+        collection.backgroundColor = .ypWhite
         return collection
     }()
     
-    let helper = SupplementaryCollection()
+    private let helper = SupplementaryCollection()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +112,7 @@ class NewTrackerViewController: UIViewController {
         
         collectionView.delegate = helper
         collectionView.dataSource = helper
+        helper.delegateTransition = self
         
         view.backgroundColor = .ypWhite
         
@@ -105,12 +120,45 @@ class NewTrackerViewController: UIViewController {
         addConstraints()
     }
     
+    private func generateTrackerId() -> UUID {
+        return UUID()
+    }
+    
     @objc private func cancelButtonTapped() {
-        
+        delegateTransition?.onTransition(value: "", for: "dismiss")
+        dismiss(animated: true)
     }
     
     @objc private func createButtonTapped() {
+        guard let trackerText = trackerText,
+              let category = category,
+              let trackerEmoji = trackerEmoji,
+              let trackerColor = trackerColor
+        else {
+            return
+        }
         
+        createNewTracker(trackerText: trackerText, category: category, trackerSchedule: trackerSchedule, trackerEmoji: trackerEmoji, trackerColor: trackerColor)
+        
+        dismiss(animated: true)
+    }
+    
+    private func createNewTracker(trackerText: String, category: String, trackerSchedule: [String]?, trackerEmoji: String, trackerColor: UIColor) {
+        guard let trackerSchedule = trackerSchedule,
+              trackerText != ""
+        else {
+            return
+        }
+        
+        let newTracker = Tracker(
+            trackerId: generateTrackerId(),
+            trackerText: trackerText,
+            trackerEmoji: trackerEmoji,
+            trackerColor: trackerColor,
+            trackerSchedule: trackerSchedule
+        )
+        delegateTransition?.onTransition(value: newTracker, for: "newTracker")
+        delegateTransition?.onTransition(value: category, for: "newCategory")
     }
     
     private func addSubviews() {
@@ -135,13 +183,13 @@ class NewTrackerViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
             
             scrollView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 24),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            textField.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24),
+            textField.topAnchor.constraint(equalTo: scrollView.topAnchor),
             textField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             textField.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
@@ -177,11 +225,12 @@ extension NewTrackerViewController: UITableViewDelegate {
         switch indexPath.row {
         case 0: // "Категория"
             let categoriesVC = CategoriesViewController()
-            categoriesVC.delegate = self
+            categoriesVC.delegateTransition = self
+            categoriesVC.categories = categories
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
             let scheduleVC = ScheduleViewController()
-            scheduleVC.delegate = self
+            scheduleVC.delegateTransition = self
             present(scheduleVC, animated: true)
         default: break
         }
@@ -234,22 +283,59 @@ extension NewTrackerViewController: UITableViewDataSource {
 
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        trackerText = textField.text
         textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if range.location == 0 && string == " " {
+            return false
+        } else if textField.text?.isEmpty == true && !string.isEmpty {
+            chosenName = true
+        }
         
         return true
     }
-}
-
-extension NewTrackerViewController: CategoriesViewControllerDelegate {
-    func addCategoryForTracker(category: String) {
-        currentCategory = category
-        tableView.reloadData()
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField.text?.isEmpty == true {
+            chosenName = false
+        }
     }
 }
 
-extension NewTrackerViewController: ScheduleViewControllerDelegate {
-    func addScheduleForTracker(_ schedule: [String]) {
-        currentSchedule = schedule
-        tableView.reloadData()
+extension NewTrackerViewController: ScreenTransitionProtocol {
+    func onTransition<T>(value: T, for key: String) {
+        switch key {
+        case "categories":
+            categories = value as? [String]
+        case "category":
+            currentCategory = value as? String
+            tableView.reloadData()
+            category = value as? String
+            chosenCategory = true
+        case "color":
+            trackerColor = value as? UIColor
+            chosenColor = true
+        case "emoji":
+            trackerEmoji = value as? String
+            chosenEmoji = true
+        case "schedule":
+            currentSchedule = value as? [String]
+            tableView.reloadData()
+            chosenSchedule = true
+            trackerSchedule = value as? [String]
+        default:
+            break
+        }
+        
+        if chosenName == true && chosenCategory == true && chosenSchedule == true && chosenEmoji == true && chosenColor == true {
+            createButton.backgroundColor = .ypBlack
+            createButton.setTitleColor(.ypWhite, for: .normal)
+        } else {
+            createButton.backgroundColor = .ypGray
+            createButton.setTitleColor(.white, for: .normal)
+        }
     }
 }

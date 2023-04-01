@@ -1,6 +1,9 @@
 import UIKit
 
 class TypeNewTrackerViewController: UIViewController {
+    weak var delegateTransition: ScreenTransitionProtocol?
+    var categories: [String]?
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
@@ -47,11 +50,15 @@ class TypeNewTrackerViewController: UIViewController {
     
     @objc private func repeatingTrackerButtonTapped() {
         let newTrackerVC = NewTrackerViewController()
+        newTrackerVC.delegateTransition = self
+        newTrackerVC.categories = categories
         present(newTrackerVC, animated: true)
     }
     
     @objc private func onetimeTrackerButtonTapped() {
         let newTrackerVC = NewTrackerViewController()
+        newTrackerVC.delegateTransition = self
+        newTrackerVC.categories = categories
         present(newTrackerVC, animated: true)
     }
     
@@ -68,7 +75,7 @@ class TypeNewTrackerViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            titleLabel.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 40),
             
             repeatingTrackerButton.bottomAnchor.constraint(equalTo: view.centerYAnchor),
             repeatingTrackerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -82,5 +89,11 @@ class TypeNewTrackerViewController: UIViewController {
             onetimeTrackerButton.topAnchor.constraint(equalTo: repeatingTrackerButton.bottomAnchor, constant: 16)
         ])
     }
-    
+}
+
+extension TypeNewTrackerViewController: ScreenTransitionProtocol {
+    func onTransition<T>(value: T, for key: String) {
+        delegateTransition?.onTransition(value: value, for: key)
+        self.dismiss(animated: true)
+    }
 }
