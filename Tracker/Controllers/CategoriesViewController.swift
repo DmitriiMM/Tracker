@@ -1,6 +1,6 @@
 import UIKit
 
-class CategoriesViewController: UIViewController {
+final class CategoriesViewController: UIViewController {
     private var heightTableView: Int = -1
     weak var delegateTransition: ScreenTransitionProtocol?
     var categories: [String]?

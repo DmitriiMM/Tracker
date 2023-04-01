@@ -1,6 +1,6 @@
 import UIKit
 
-class NewTrackerViewController: UIViewController {
+final class NewTrackerViewController: UIViewController {
     private var currentCategory: String?
     private var currentSchedule: [String]?
     private var category: String?

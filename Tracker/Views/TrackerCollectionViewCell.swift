@@ -1,6 +1,6 @@
 import UIKit
 
-class TrackerCollectionViewCell: UICollectionViewCell {
+final class TrackerCollectionViewCell: UICollectionViewCell {
     let identifier = "cell"
     
     lazy var cellView: UIView = {

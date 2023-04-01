@@ -1,6 +1,6 @@
 import UIKit
 
-class NewCategoryViewController: UIViewController {
+final class NewCategoryViewController: UIViewController {
     weak var delegateTransition: ScreenTransitionProtocol?
     
     private lazy var titleLabel: UILabel = {

@@ -1,6 +1,6 @@
 import UIKit
 
-class ScheduleViewController: UIViewController {
+final class ScheduleViewController: UIViewController {
     private let days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     private var schedule: [String] = []
     weak var delegateTransition: ScreenTransitionProtocol?

@@ -1,6 +1,6 @@
 import UIKit
 
-class TrackerViewController: UIViewController {
+final class TrackerViewController: UIViewController {
     let currentDate = Date()
     private var trackerByСategory: [TrackerCategory] = []
     private var newTracker: Tracker?
@@ -282,12 +282,15 @@ extension TrackerViewController: ScreenTransitionProtocol {
     
     func addNewTracker() {
         guard let newTracker = newTracker, let titleNewCategory = titleNewCategory else { return }
-       
+
         let newCategory = TrackerCategory(title: titleNewCategory, trackers: [newTracker])
         
         if trackerByСategory.contains(where: { $0.title == newCategory.title }) {
             let index = trackerByСategory.firstIndex(where: { $0.title == newCategory.title })!
-                trackerByСategory[index].trackers.append(contentsOf: newCategory.trackers)
+            let oldCategory = trackerByСategory[index]
+            let updatedTrackers = oldCategory.trackers + newCategory.trackers
+            let updatedTrackerByСategory = TrackerCategory(title: newCategory.title, trackers: updatedTrackers)
+            trackerByСategory[index] = updatedTrackerByСategory
         } else if !trackerByСategory.contains(where: { $0.title == newCategory.title }) {
             trackerByСategory.append(newCategory)
         }

@@ -1,6 +1,6 @@
 import UIKit
 
-class TypeNewTrackerViewController: UIViewController {
+final class TypeNewTrackerViewController: UIViewController {
     weak var delegateTransition: ScreenTransitionProtocol?
     var categories: [String]?
     
