@@ -1,5 +1,10 @@
 import UIKit
 
+enum TypeTracker {
+case repeatingTracker
+case onetimeTracker
+}
+
 final class TypeNewTrackerViewController: UIViewController {
     weak var delegateTransition: ScreenTransitionProtocol?
     var categories: [String]?
@@ -50,6 +55,7 @@ final class TypeNewTrackerViewController: UIViewController {
     
     @objc private func repeatingTrackerButtonTapped() {
         let newTrackerVC = NewTrackerViewController()
+        newTrackerVC.typeOfNewTracker = .repeatingTracker
         newTrackerVC.delegateTransition = self
         newTrackerVC.categories = categories
         present(newTrackerVC, animated: true)
@@ -57,6 +63,7 @@ final class TypeNewTrackerViewController: UIViewController {
     
     @objc private func onetimeTrackerButtonTapped() {
         let newTrackerVC = NewTrackerViewController()
+        newTrackerVC.typeOfNewTracker = .onetimeTracker
         newTrackerVC.delegateTransition = self
         newTrackerVC.categories = categories
         present(newTrackerVC, animated: true)

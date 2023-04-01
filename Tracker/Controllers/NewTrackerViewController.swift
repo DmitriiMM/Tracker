@@ -17,12 +17,18 @@ final class NewTrackerViewController: UIViewController {
     
     weak var delegateTransition: ScreenTransitionProtocol?
     var categories: [String]?
+    var typeOfNewTracker: TypeTracker?
+    private var heightTableView: Int = 74
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
         label.textColor = .ypBlack
-        label.text = "Новая привычка"
+        switch typeOfNewTracker {
+        case .repeatingTracker: label.text = "Новая привычка"
+        case .onetimeTracker: label.text = "Новое нерегулярное событие"
+        case .none: break
+        }
         
         return label
     }()
@@ -52,9 +58,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .ypBackground
@@ -110,6 +114,12 @@ final class NewTrackerViewController: UIViewController {
         
         collectionView.register(SuplementaryCollectionCell.self, forCellWithReuseIdentifier: SuplementaryCollectionCell().identifier)
         
+        switch typeOfNewTracker {
+        case .repeatingTracker: heightTableView = 149
+        case .onetimeTracker: heightTableView = 74
+        case .none: break
+        }
+        
         collectionView.delegate = helper
         collectionView.dataSource = helper
         helper.delegateTransition = self
@@ -138,18 +148,22 @@ final class NewTrackerViewController: UIViewController {
             return
         }
         
-        createNewTracker(trackerText: trackerText, category: category, trackerSchedule: trackerSchedule, trackerEmoji: trackerEmoji, trackerColor: trackerColor)
+        switch typeOfNewTracker {
+        case .onetimeTracker:
+            createNewTracker(trackerText: trackerText, category: category, trackerSchedule: nil, trackerEmoji: trackerEmoji, trackerColor: trackerColor)
+            
+        case .repeatingTracker:
+            guard let trackerSchedule = trackerSchedule else { return }
+            createNewTracker(trackerText: trackerText, category: category, trackerSchedule: trackerSchedule, trackerEmoji: trackerEmoji, trackerColor: trackerColor)
+           
+        case .none: break
+        }
         
         dismiss(animated: true)
     }
     
     private func createNewTracker(trackerText: String, category: String, trackerSchedule: [String]?, trackerEmoji: String, trackerColor: UIColor) {
-        guard let trackerSchedule = trackerSchedule,
-              trackerText != ""
-        else {
-            return
-        }
-        
+        guard trackerText != "" else { return }
         let newTracker = Tracker(
             trackerId: generateTrackerId(),
             trackerText: trackerText,
@@ -198,7 +212,7 @@ final class NewTrackerViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
-            tableView.heightAnchor.constraint(equalToConstant: 149),
+            tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView)),
             
             collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
             collectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
@@ -239,7 +253,11 @@ extension NewTrackerViewController: UITableViewDelegate {
 
 extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        switch typeOfNewTracker {
+        case .repeatingTracker: return 2
+        case .onetimeTracker: return 1
+        case .none: return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -330,12 +348,24 @@ extension NewTrackerViewController: ScreenTransitionProtocol {
             break
         }
         
-        if chosenName == true && chosenCategory == true && chosenSchedule == true && chosenEmoji == true && chosenColor == true {
-            createButton.backgroundColor = .ypBlack
-            createButton.setTitleColor(.ypWhite, for: .normal)
-        } else {
-            createButton.backgroundColor = .ypGray
-            createButton.setTitleColor(.white, for: .normal)
+        switch typeOfNewTracker {
+        case .repeatingTracker:
+            if chosenName == true && chosenCategory == true && chosenSchedule == true && chosenEmoji == true && chosenColor == true {
+                createButton.backgroundColor = .ypBlack
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            } else {
+                createButton.backgroundColor = .ypGray
+                createButton.setTitleColor(.white, for: .normal)
+            }
+        case .onetimeTracker:
+            if chosenName == true && chosenCategory == true && chosenEmoji == true && chosenColor == true {
+                createButton.backgroundColor = .ypBlack
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            } else {
+                createButton.backgroundColor = .ypGray
+                createButton.setTitleColor(.white, for: .normal)
+            }
+        case .none: break
         }
     }
 }
