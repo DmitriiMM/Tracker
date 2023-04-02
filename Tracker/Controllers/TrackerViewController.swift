@@ -2,7 +2,7 @@ import UIKit
 
 final class TrackerViewController: UIViewController {
     let currentDate = Date()
-    private var trackerByСategory: [TrackerCategory] = []
+    private var trackerByСategory: [TrackerCategory] = []//mockTrackers
     private var newTracker: Tracker?
     private var titleNewCategory: String?
     
@@ -33,21 +33,18 @@ final class TrackerViewController: UIViewController {
         return button
     }()
     
-    private lazy var datePickerButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .ypBackgroundGray
-        button.layer.cornerRadius = 8
-        button.clipsToBounds = true
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        if #available(iOS 13.4, *) {
+            picker.preferredDatePickerStyle = .compact
+        }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        let formattedDate = dateFormatter.string(from: currentDate)
-        
-        button.setTitle(formattedDate, for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.appFont(.regular, withSize: 17)
-        
-        return button
+        picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "ru_RU")
+        picker.calendar.firstWeekday = 2
+        picker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+
+        return picker
     }()
     
     private lazy var searchField: UISearchTextField = {
@@ -101,6 +98,53 @@ final class TrackerViewController: UIViewController {
         addConstraints()
     }
     
+    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
+        let weekday = sender.calendar.component(.weekday, from: sender.date)
+        
+        var day = "Day"
+        switch weekday {
+        case 1: day = "Вс"
+        case 2: day = "Пн"
+        case 3: day = "Вт"
+        case 4: day = "Ср"
+        case 5: day = "Чт"
+        case 6: day = "Пт"
+        case 7: day = "Сб"
+        default: break
+        }
+        
+        let memoryTrackerByСategory = trackerByСategory
+        for category in trackerByСategory {
+            var filterTrackers: [Tracker] = []
+            for tracker in category.trackers {
+                if let schedule = tracker.trackerSchedule {
+                    if schedule.contains(where: { $0 == day }) {
+                        filterTrackers.append(tracker)
+                    }
+                }
+            }
+            
+            let newCategory = TrackerCategory(title: category.title, trackers: filterTrackers)
+            if newCategory.title == category.title {
+                let index = trackerByСategory.firstIndex(where: { $0.title == newCategory.title })!
+                trackerByСategory[index] = newCategory
+            }
+        }
+        
+        for category in trackerByСategory {
+            if category.trackers.isEmpty {
+                let index = trackerByСategory.firstIndex(where: { $0.trackers.isEmpty })!
+                trackerByСategory.remove(at: index)
+            }
+        }
+        
+        collectionView.reloadData()
+        
+        dismiss(animated: true) {
+            self.trackerByСategory = memoryTrackerByСategory
+        }
+    }
+    
     @objc private func addTrackerButtonTapped() {
         let typeNewTrackerVC = TypeNewTrackerViewController()
         typeNewTrackerVC.delegateTransition = self
@@ -116,7 +160,7 @@ final class TrackerViewController: UIViewController {
         view.addSubview(collectionView)
         topBar.addSubview(titleLabel)
         topBar.addSubview(addTrackerButton)
-        topBar.addSubview(datePickerButton)
+        topBar.addSubview(datePicker)
         topBar.addSubview(searchField)
     }
     
@@ -127,7 +171,7 @@ final class TrackerViewController: UIViewController {
         emptyCollectionLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         addTrackerButton.translatesAutoresizingMaskIntoConstraints = false
-        datePickerButton.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
         searchField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -148,10 +192,10 @@ final class TrackerViewController: UIViewController {
             searchField.bottomAnchor.constraint(equalTo: topBar.bottomAnchor, constant: -10),
             searchField.trailingAnchor.constraint(equalTo: topBar.trailingAnchor, constant: -16),
             
-            datePickerButton.trailingAnchor.constraint(equalTo: searchField.trailingAnchor),
-            datePickerButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            datePickerButton.topAnchor.constraint(equalTo: topBar.topAnchor, constant: 91),
-            datePickerButton.widthAnchor.constraint(equalToConstant: 80),
+            datePicker.trailingAnchor.constraint(equalTo: searchField.trailingAnchor),
+            datePicker.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+            datePicker.topAnchor.constraint(equalTo: topBar.topAnchor, constant: 91),
+            datePicker.widthAnchor.constraint(equalToConstant: 120),
             
             emptyCollectionImageView.centerYAnchor.constraint(equalTo: topBar.bottomAnchor, constant: (view.safeAreaLayoutGuide.layoutFrame.height - topBar.frame.height)/3),
             emptyCollectionImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),

@@ -32,6 +32,7 @@
 		A34EB28C29D0BC6E00A0E475 /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28B29D0BC6E00A0E475 /* NewTrackerViewController.swift */; };
 		A34EB28E29D0E92900A0E475 /* SuplementaryCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34EB28D29D0E92900A0E475 /* SuplementaryCollection.swift */; };
 		A3C7B3FF29D74DDA0033F251 /* ScreenTransitionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */; };
+		A3C7B40129DA31800033F251 /* MockTrackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7B40029DA31800033F251 /* MockTrackers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		A34EB28B29D0BC6E00A0E475 /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		A34EB28D29D0E92900A0E475 /* SuplementaryCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuplementaryCollection.swift; sourceTree = "<group>"; };
 		A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTransitionProtocol.swift; sourceTree = "<group>"; };
+		A3C7B40029DA31800033F251 /* MockTrackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTrackers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				A334C62529CF179B00484BAA /* UIColor+Extension.swift */,
 				A334C63029CF1C0800484BAA /* UIFont+Extensions.swift */,
 				A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */,
+				A3C7B40029DA31800033F251 /* MockTrackers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				A334C62229CF040700484BAA /* TabBarController.swift in Sources */,
 				A34EB28E29D0E92900A0E475 /* SuplementaryCollection.swift in Sources */,
 				A34EB28829D09EE200A0E475 /* TrackerRecord.swift in Sources */,
+				A3C7B40129DA31800033F251 /* MockTrackers.swift in Sources */,
 				A33894A829D5FCF6003A8A6A /* ScheduleViewController.swift in Sources */,
 				A3122B1229CCC5DC00C08EEA /* SupplementaryView.swift in Sources */,
 				A34EB28429D09D0F00A0E475 /* Tracker.swift in Sources */,
