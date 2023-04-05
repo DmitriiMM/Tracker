@@ -17,6 +17,7 @@ final class NewTrackerViewController: UIViewController {
     
     weak var delegateTransition: ScreenTransitionProtocol?
     var categories: [String]?
+    var lastCategory: IndexPath?
     var typeOfNewTracker: TypeTracker?
     private var heightTableView: Int = 74
     
@@ -241,6 +242,7 @@ extension NewTrackerViewController: UITableViewDelegate {
             let categoriesVC = CategoriesViewController()
             categoriesVC.delegateTransition = self
             categoriesVC.categories = categories
+            categoriesVC.checkmarkedCell = lastCategory
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
             let scheduleVC = ScheduleViewController()
@@ -344,6 +346,8 @@ extension NewTrackerViewController: ScreenTransitionProtocol {
             tableView.reloadData()
             chosenSchedule = true
             trackerSchedule = value as? [String]
+        case "checkmark":
+            lastCategory = value as? IndexPath
         default:
             break
         }

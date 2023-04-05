@@ -1,9 +1,14 @@
 import UIKit
 
+protocol TrackerCollectionViewCellCounterDelegate: AnyObject {
+    func plusButtonTapped(on cell: TrackerCollectionViewCell)
+}
+
 final class TrackerCollectionViewCell: UICollectionViewCell {
     let identifier = "cell"
+    weak var delegate: TrackerCollectionViewCellCounterDelegate?
     
-    lazy var cellView: UIView = {
+    private lazy var cellView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "Color5")
         view.layer.cornerRadius = 16
@@ -12,7 +17,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    lazy var emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = .white.withAlphaComponent(0.3)
         label.layer.cornerRadius = 12
@@ -24,7 +29,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var trackCardLabel: UILabel = {
+    private lazy var trackCardLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 2
         label.font = UIFont.appFont(.medium, withSize: 12)
@@ -44,15 +49,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var plusButton: UIButton = {
+    private lazy var plusButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(systemName: "plus")
-        button.setImage(image, for: .normal)
         button.tintColor = .white
         button.backgroundColor = cellView.backgroundColor
         button.layer.cornerRadius = 17
         button.clipsToBounds = true
-        button.addTarget(self, action: #selector(incrementCounter), for: .touchUpInside)
+        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         
         return button
     }()
@@ -68,8 +71,38 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func incrementCounter() {
-        
+    @objc private func plusButtonTapped() {
+        delegate?.plusButtonTapped(on: self)
+    }
+    
+    func confugureSubviews(with tracker: Tracker) {
+        trackCardLabel.text = tracker.trackerText
+        cellView.backgroundColor = tracker.trackerColor
+        plusButton.backgroundColor = tracker.trackerColor
+        emojiLabel.text = tracker.trackerEmoji
+    }
+    
+    func configRecordInfo(days: Int, isDoneToday: Bool) {
+        configRecordInfoText(days: days)
+        configRecordInfoSymbol(isDone: isDoneToday)
+    }
+    
+    private func configRecordInfoSymbol(isDone: Bool) {
+        let image: UIImage = (isDone ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus"))!
+        plusButton.setImage(image, for: .normal)
+        let opacity: Float = isDone ? 0.3 : 1
+        plusButton.layer.opacity = opacity
+    }
+    
+    private func configRecordInfoText(days: Int) {
+        switch days % 10 {
+        case 1:
+            counterLabel.text = "\(days) день"
+        case 2...4:
+            counterLabel.text = "\(days) дня"
+        default:
+            counterLabel.text = "\(days) дней"
+        }
     }
     
     private func addSubviews() {

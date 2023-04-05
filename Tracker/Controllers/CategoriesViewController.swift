@@ -4,6 +4,7 @@ final class CategoriesViewController: UIViewController {
     private var heightTableView: Int = -1
     weak var delegateTransition: ScreenTransitionProtocol?
     var categories: [String]?
+    var checkmarkedCell: IndexPath?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -126,6 +127,8 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         cell.accessoryType = .checkmark
+        checkmarkedCell = indexPath
+        delegateTransition?.onTransition(value: checkmarkedCell, for: "checkmark")
         dismiss(animated: true) {
             self.delegateTransition?.onTransition(value: cell.textLabel?.text, for: "category")
             self.delegateTransition?.onTransition(value: self.categories, for: "categories")
@@ -146,6 +149,9 @@ extension CategoriesViewController: UITableViewDataSource {
         
         cell.textLabel?.text = categories?[indexPath.row]
         cell.textLabel?.font = UIFont.appFont(.regular, withSize: 17)
+        if indexPath == checkmarkedCell {
+            cell.accessoryType = .checkmark
+        }
         
         return cell
     }
