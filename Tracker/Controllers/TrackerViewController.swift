@@ -10,6 +10,9 @@ final class TrackerViewController: UIViewController {
     private var completedTrackers: Set<TrackerRecord> = []
     private var visibleCategories: [TrackerCategory] = []
     
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    
     private lazy var topBar: UIView = {
         let view = UIView()
         view.backgroundColor = .ypWhite
@@ -88,7 +91,6 @@ final class TrackerViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhite
-        visibleCategories = categories
         
         collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
 
@@ -100,6 +102,8 @@ final class TrackerViewController: UIViewController {
         
         addSubviews()
         addConstraints()
+        
+        categories = trackerCategoryStore.categories
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -143,7 +147,6 @@ final class TrackerViewController: UIViewController {
         }
         
         collectionView.reloadData()
-        visibleCategories = categories
         dismiss(animated: true) {
             self.categories = self.memoryTrackerByСategory
         }
@@ -257,13 +260,11 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
         
         categories = filteredCategories
         collectionView.reloadData()
-        visibleCategories = categories
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         categories = memoryTrackerByСategory
         collectionView.reloadData()
-        visibleCategories = categories
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -276,7 +277,7 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
 extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
     func plusButtonTapped(on cell: TrackerCollectionViewCell) {
         let indexPath: IndexPath = collectionView.indexPath(for: cell) ?? IndexPath()
-        let id = visibleCategories[indexPath.section].trackers[indexPath.row].trackerId
+        let id = categories[indexPath.section].trackers[indexPath.row].trackerId
         var daysCount = completedTrackers.filter { $0.trackerId == id }.count
         if !completedTrackers.contains(where: { $0.trackerId == id && $0.date == currentDate }) {
             completedTrackers.insert(TrackerRecord(trackerId: id, date: currentDate))
@@ -304,7 +305,7 @@ extension TrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell().identifier, for: indexPath) as? TrackerCollectionViewCell else { return UICollectionViewCell() }
         
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers.filter { $0.trackerId == tracker.trackerId }.count
         let isDoneToday = completedTrackers.contains(where: { $0.trackerId == tracker.trackerId && $0.trackerId == tracker.trackerId }) ? true : false
         cell.confugureSubviews(with: tracker)
@@ -374,21 +375,11 @@ extension TrackerViewController: ScreenTransitionProtocol {
     
     func addNewTracker() {
         guard let newTracker = newTracker, let titleNewCategory = titleNewCategory else { return }
-
-        let newCategory = TrackerCategory(title: titleNewCategory, trackers: [newTracker])
         
-        if categories.contains(where: { $0.title == newCategory.title }) {
-            let index = categories.firstIndex(where: { $0.title == newCategory.title })!
-            let oldCategory = categories[index]
-            let updatedTrackers = oldCategory.trackers + newCategory.trackers
-            let updatedTrackerByСategory = TrackerCategory(title: newCategory.title, trackers: updatedTrackers)
-            categories[index] = updatedTrackerByСategory
-        } else if !categories.contains(where: { $0.title == newCategory.title }) {
-            categories.append(newCategory)
-        }
+        try! trackerCategoryStore.saveTracker(tracker: newTracker, to: titleNewCategory)
+        categories = trackerCategoryStore.categories
         
         collectionView.reloadData()
-        visibleCategories = categories
         self.newTracker = nil
         self.titleNewCategory = nil
     }
