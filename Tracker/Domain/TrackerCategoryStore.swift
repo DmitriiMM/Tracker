@@ -73,9 +73,9 @@ final class TrackerCategoryStore: NSObject {
     func fetchCategory(with name: String) throws -> TrackerCategoryCoreData? {
         let request = fetchedResultsController.fetchRequest
         request.predicate = NSPredicate(format: "%K == %@", argumentArray: ["categoryTitle", name])
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.categoryTitle, ascending: true)
-        ]
+//        request.sortDescriptors = [
+//            NSSortDescriptor(keyPath: \TrackerCategoryCoreData.categoryTitle, ascending: true)
+//        ]
         
         do {
             let category = try context.fetch(request).first

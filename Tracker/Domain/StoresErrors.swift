@@ -10,4 +10,7 @@ enum StoreError: Error {
     case decodingErrorInvalidTrackers
     case decodingErrorInvalidCategoryEntity
     case failedToSaveContext
+    case decodingErrorInvalidRecordDate
+    case decodingErrorInvalidRecordTrackerID
+    case decodingErrorInvalidRecordEntity
 }

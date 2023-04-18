@@ -1,7 +1,13 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-    private let currentDate = Date()
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .none
+        return dateFormatter
+    }()
+    private var currentDate = String()
     private var categories: [TrackerCategory] = [] //mockTrackers
     private var newTracker: Tracker?
     private var titleNewCategory: String?
@@ -12,6 +18,7 @@ final class TrackerViewController: UIViewController {
     
     private let trackerStore = TrackerStore()
     private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
     
     private lazy var topBar: UIView = {
         let view = UIView()
@@ -103,7 +110,12 @@ final class TrackerViewController: UIViewController {
         addSubviews()
         addConstraints()
         
+        currentDate = dateFormatter.string(from: Date())
+      
         categories = trackerCategoryStore.categories
+        completedTrackers = trackerRecordStore.records as! Set<TrackerRecord>
+        print("🍏completedTrackers\(completedTrackers)🍏")
+        
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -277,17 +289,25 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
 extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
     func plusButtonTapped(on cell: TrackerCollectionViewCell) {
         let indexPath: IndexPath = collectionView.indexPath(for: cell) ?? IndexPath()
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
         let id = categories[indexPath.section].trackers[indexPath.row].trackerId
         var daysCount = completedTrackers.filter { $0.trackerId == id }.count
+        
+        
         if !completedTrackers.contains(where: { $0.trackerId == id && $0.date == currentDate }) {
-            completedTrackers.insert(TrackerRecord(trackerId: id, date: currentDate))
+//            completedTrackers.insert(TrackerRecord(trackerId: id, date: currentDate))
+            try! trackerRecordStore.saveRecord(tracker: tracker, to: currentDate)
             daysCount += 1
             cell.configRecordInfo(days: daysCount, isDoneToday: true)
         } else {
-            completedTrackers.remove(TrackerRecord(trackerId: id, date: currentDate))
+//            completedTrackers.remove(TrackerRecord(trackerId: id, date: currentDate))
+            try! trackerRecordStore.removeRecord(tracker: tracker, to: currentDate)
             daysCount -= 1
             cell.configRecordInfo(days: daysCount, isDoneToday: false)
         }
+        
+        completedTrackers = trackerRecordStore.records as! Set<TrackerRecord>
+        print("🍏completedTrackers\(completedTrackers)🍏")
     }
 }
 
