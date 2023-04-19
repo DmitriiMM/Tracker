@@ -1,19 +1,13 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .none
-        return dateFormatter
-    }()
     private var currentDate = String()
     private var categories: [TrackerCategory] = [] //mockTrackers
     private var newTracker: Tracker?
     private var titleNewCategory: String?
     private var memoryTrackerByСategory: [TrackerCategory] = []
     private var searchText = ""
-    private var completedTrackers: Set<TrackerRecord> = []
+    private var completedTrackers: Set<TrackerRecord>? = []
     private var visibleCategories: [TrackerCategory] = []
     
     private let trackerStore = TrackerStore()
@@ -110,10 +104,10 @@ final class TrackerViewController: UIViewController {
         addSubviews()
         addConstraints()
         
-        currentDate = dateFormatter.string(from: Date())
+        currentDate = DateHelper().dateFormatter.string(from: Date())
       
         categories = trackerCategoryStore.categories
-        completedTrackers = trackerRecordStore.records as! Set<TrackerRecord>
+        completedTrackers = trackerRecordStore.records as? Set<TrackerRecord>
         print("🍏completedTrackers\(completedTrackers)🍏")
         
     }
@@ -291,10 +285,10 @@ extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
         let indexPath: IndexPath = collectionView.indexPath(for: cell) ?? IndexPath()
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         let id = categories[indexPath.section].trackers[indexPath.row].trackerId
-        var daysCount = completedTrackers.filter { $0.trackerId == id }.count
+        var daysCount = completedTrackers?.filter { $0.trackerId == id }.count ?? 0
         
-        
-        if !completedTrackers.contains(where: { $0.trackerId == id && $0.date == currentDate }) {
+        print("🔴\(currentDate)")
+        if !(completedTrackers?.contains(where: { $0.trackerId == id && $0.date == currentDate }) ?? false) {
 //            completedTrackers.insert(TrackerRecord(trackerId: id, date: currentDate))
             try! trackerRecordStore.saveRecord(tracker: tracker, to: currentDate)
             daysCount += 1
@@ -306,8 +300,9 @@ extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
             cell.configRecordInfo(days: daysCount, isDoneToday: false)
         }
         
-        completedTrackers = trackerRecordStore.records as! Set<TrackerRecord>
+        completedTrackers = trackerRecordStore.records as? Set<TrackerRecord>
         print("🍏completedTrackers\(completedTrackers)🍏")
+        collectionView.reloadData()
     }
 }
 
@@ -326,8 +321,8 @@ extension TrackerViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell().identifier, for: indexPath) as? TrackerCollectionViewCell else { return UICollectionViewCell() }
         
         let tracker = categories[indexPath.section].trackers[indexPath.row]
-        let daysCount = completedTrackers.filter { $0.trackerId == tracker.trackerId }.count
-        let isDoneToday = completedTrackers.contains(where: { $0.trackerId == tracker.trackerId && $0.trackerId == tracker.trackerId }) ? true : false
+        let daysCount = completedTrackers?.filter { $0.trackerId == tracker.trackerId }.count ?? 0
+        let isDoneToday = (completedTrackers?.contains(where: { $0.trackerId == tracker.trackerId && $0.trackerId == tracker.trackerId }) ?? false) ? true : false
         cell.confugureSubviews(with: tracker)
         cell.configRecordInfo(days: daysCount, isDoneToday: isDoneToday)
         cell.delegate = self

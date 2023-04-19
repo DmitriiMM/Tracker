@@ -13,4 +13,5 @@ enum StoreError: Error {
     case decodingErrorInvalidRecordDate
     case decodingErrorInvalidRecordTrackerID
     case decodingErrorInvalidRecordEntity
+    case decodingErrorInvalidTracker
 }

@@ -76,6 +76,19 @@ final class TrackerStore: NSObject {
         
         return trackerCoreData
     }
+    
+    func fetchTracker(with id: UUID) throws -> TrackerCoreData? {
+        let request = fetchedResultsController.fetchRequest
+        request.predicate = NSPredicate(format: "%K == %@", "trackerId", id as CVarArg)
+        
+        do {
+            let record = try context.fetch(request).first
+            print("⚜️\(record)⚜️")
+            return record
+        } catch {
+            throw StoreError.decodingErrorInvalidTracker
+        }
+    }
 }
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {
