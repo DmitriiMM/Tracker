@@ -3,10 +3,6 @@ import CoreData
 
 final class TrackerRecordStore: NSObject {
     private let context: NSManagedObjectContext
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
-    private var updatedIndexes: IndexSet?
-    private var movedIndexes: Set<StoreUpdate.Move>?
     private let trackerStore = TrackerStore()
     
     convenience override init() {
@@ -16,155 +12,52 @@ final class TrackerRecordStore: NSObject {
     
     init(context: NSManagedObjectContext) {
         self.context = context
+        super.init()
     }
     
-    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData> = {
-        let fetchRequest = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerRecordCoreData.trackerRecordDate, ascending: true)
-        ]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController.delegate = self
-        try? fetchedResultsController.performFetch()
-        
-        return fetchedResultsController
-    }()
-    
-    var records: NSSet {
-//        guard
-            let objects = self.fetchedResultsController.fetchedObjects
-        
-        var recordsArray: [TrackerRecord] = []
+    var records: Set<TrackerRecord> {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.returnsObjectsAsFaults = false
+        let objects = try? context.fetch(request)
+        var recordsSet: Set<TrackerRecord> = []
         for i in objects! {
-            print("i🍊\(i)")
-            let rec = try! fetchRecords(from: i)
-            recordsArray.append(rec)
+            let record = try! makeTrackerRecord(from: i)
+            recordsSet.insert(record)
         }
-//            var recordsArray = try? objects.map({ try self.fetchRecords(from: $0) })
-//        else { return [] }
-        let records = NSSet(array: recordsArray)
-        print("🍊🍊records \(records)🍊🍊")
-        return records
+        
+        return recordsSet
     }
     
-    func fetchRecords(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
-        guard let date = trackerRecordCoreData.trackerRecordDate else {
-            throw StoreError.decodingErrorInvalidRecordDate
-        }
-        guard let id = trackerRecordCoreData.trackerRecordId else {
-            throw StoreError.decodingErrorInvalidRecordTrackerID
-        }
+    func add(_ newRecord: TrackerRecord) throws {
+        let trackerCoreData = try trackerStore.fetchTracker(with: newRecord.trackerId)
+        let trackerRecordCoreData = TrackerRecordCoreData(context: context)
+        trackerRecordCoreData.trackerRecordId = newRecord.trackerId
+        trackerRecordCoreData.trackerRecordDate = newRecord.date
+        trackerRecordCoreData.tracker = trackerCoreData
         
-        print("🍊\(TrackerRecord(trackerId: id, date: date))🍊")
-        
-        return TrackerRecord(
-            trackerId: id,
-            date: date
+        try context.save()
+    }
+    
+    func remove(_ record: TrackerRecord) throws {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerRecordCoreData.trackerRecordId),
+            record.trackerId.uuidString
         )
-    }
-    
-    func fetchRecord(for date: String, with id: UUID) throws -> [TrackerRecordCoreData]? {
-        let request = fetchedResultsController.fetchRequest
-        request.predicate = NSPredicate(format: "%K == %@ AND %K == %@",
-                                        "trackerRecordDate", date,
-                                        "trackerRecordId", id as CVarArg
-                                        // #keyPath(TrackerRecordCoreData.tracker.trackerId),
-                                        // #keyPath(TrackerCoreData.trackerId),
-                                        //id as CVarArg
-        )
-        print("🔰predicate \(String(describing: request.predicate))🔰")
-        //        request.sortDescriptors = [
-        //            NSSortDescriptor(keyPath: \TrackerRecordCoreData.trackerRecordDate, ascending: true)
-        //        ]
+        let records = try context.fetch(request)
+        guard let recordToRemove = records.first else { return }
+        context.delete(recordToRemove)
         
-        do {
-            let record = try context.fetch(request)
-            print("❎record \(String(describing: record))")
-            return record
-        } catch {
-            throw StoreError.decodingErrorInvalidRecordEntity
-        }
+        try context.save()
     }
     
-    func removeRecord(tracker: Tracker, to date: String) throws {
+    private func makeTrackerRecord(from coreData: TrackerRecordCoreData) throws -> TrackerRecord {
+        guard
+            let id = coreData.trackerRecordId,
+            let date = coreData.trackerRecordDate
+        else { throw StoreError.decodingErrorInvalidTrackerRecord }
         
-        print("⚠️⚠️⚠️⚠️⚠️⚠️⚠️")
-        guard let existingRecords = try fetchRecord(for: date, with: tracker.trackerId) else { return }
-        print("⚠️⚠️⚠️trackerId \(String(describing: existingRecords)) ?= \(tracker.trackerId)⚠️⚠️⚠️")
-        for record in existingRecords {
-            if let id = record.trackerRecordId {
-                if id == tracker.trackerId {
-                    print("DELETErec❌❌❌")
-                    context.delete(record)
-                }
-            }
-        }
-       
-        do {
-            try context.save()
-        } catch {
-            print("🟡НЕ ДОБАВИЛАСЬ НОВАЯ ЗАПИСЬ")
-        }
-    }
-    
-    func saveRecord(tracker: Tracker, to date: String) throws {
-
-        let newRecord = TrackerRecordCoreData(context: (UIApplication.shared.delegate as! AppDelegate).persistantConteiner.viewContext)
-        let tracker = try trackerStore.fetchTracker(with: tracker.trackerId)
-//        newRecord.tracker = tracker
-        newRecord.trackerRecordDate = DateHelper().dateFormatter.string(from: Date())
-        newRecord.trackerRecordId = tracker?.trackerId
-        print("🍉  🍉  🍉 \(newRecord.trackerRecordId) 🍉VS🍉 \(tracker?.trackerId)🍉  🍉  🍉")
-        
-        do {
-            try context.save()
-        } catch {
-            print("🟡НЕ СОХРАНИЛАСЬ НОВАЯ ЗАПИСЬ")
-        }
-    }
-    
-    //    func saveRecord(tracker: Tracker, to date: String) throws {
-    //
-    //        let existingRecord = try fetchRecords(for: date)
-    //        print("⚠️⚠️⚠️trackerId \(String(describing: existingRecord?.trackers?.trackerId)) ?= \(tracker.trackerId)⚠️⚠️⚠️")
-    //        if let id = existingRecord?.trackers?.trackerId, id == tracker.trackerId {
-    //            print("⚠️⚠️⚠️trackerId \(String(describing: existingRecord?.trackers?.trackerId)) ?= \(id) ?= \(tracker.trackerId)⚠️⚠️⚠️")
-    //
-    //            context.delete(existingRecord!)
-    //            print("🍊🍊existingRecord \(String(describing: existingRecord))🍊🍊")
-    //
-    //        } else {
-    //            let newRecord = TrackerRecordCoreData(context: context)
-    //            print("🍉newRecord \(newRecord)🍉")
-    //            newRecord.trackers = try trackerStore.makeTracker(from: tracker)
-    //            newRecord.trackerRecordDate = TrackerViewController().dateFormatter.string(from: Date())
-    //            print("🍉🍉newRecord \(newRecord)🍉🍉")
-    //        }
-    //
-    //        try! context.save()
-    //    }
-}
-
-extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    }
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .insert:
-            guard let indexPath = newIndexPath else { fatalError() }
-            insertedIndexes?.insert(indexPath.item)
-        case .delete:
-            guard let indexPath = indexPath else { fatalError() }
-            deletedIndexes?.insert(indexPath.item)
-        case .update:
-            guard let indexPath = indexPath else { fatalError() }
-            updatedIndexes?.insert(indexPath.item)
-        case .move:
-            guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { fatalError() }
-            movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
-        @unknown default:
-            fatalError()
-        }
+        return TrackerRecord(trackerId: id, date: date)
     }
 }

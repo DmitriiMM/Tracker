@@ -8,9 +8,6 @@ final class TrackerViewController: UIViewController {
     private var memoryTrackerByСategory: [TrackerCategory] = []
     private var searchText = ""
     private var completedTrackers: Set<TrackerRecord>? = []
-    private var visibleCategories: [TrackerCategory] = []
-    
-    private let trackerStore = TrackerStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     
@@ -47,7 +44,7 @@ final class TrackerViewController: UIViewController {
         picker.locale = Locale(identifier: "ru_RU")
         picker.calendar.firstWeekday = 2
         picker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-
+        
         return picker
     }()
     
@@ -57,7 +54,7 @@ final class TrackerViewController: UIViewController {
         search.placeholder = "Поиск"
         search.delegate = self
         search.searchBarStyle = .minimal
-       
+        
         return search
     }()
     
@@ -70,7 +67,7 @@ final class TrackerViewController: UIViewController {
         
         return collectionView
     }()
-   
+    
     private lazy var emptyCollectionImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "star")
@@ -107,9 +104,7 @@ final class TrackerViewController: UIViewController {
         currentDate = DateHelper().dateFormatter.string(from: Date())
       
         categories = trackerCategoryStore.categories
-        completedTrackers = trackerRecordStore.records as? Set<TrackerRecord>
-        print("🍏completedTrackers\(completedTrackers)🍏")
-        
+        completedTrackers = trackerRecordStore.records
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -287,21 +282,20 @@ extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
         let id = categories[indexPath.section].trackers[indexPath.row].trackerId
         var daysCount = completedTrackers?.filter { $0.trackerId == id }.count ?? 0
         
-        print("🔴\(currentDate)")
         if !(completedTrackers?.contains(where: { $0.trackerId == id && $0.date == currentDate }) ?? false) {
-//            completedTrackers.insert(TrackerRecord(trackerId: id, date: currentDate))
-            try! trackerRecordStore.saveRecord(tracker: tracker, to: currentDate)
+            let trackerRecord = TrackerRecord(trackerId: tracker.trackerId, date: currentDate)
+            try? trackerRecordStore.add(trackerRecord)
             daysCount += 1
             cell.configRecordInfo(days: daysCount, isDoneToday: true)
         } else {
-//            completedTrackers.remove(TrackerRecord(trackerId: id, date: currentDate))
-            try! trackerRecordStore.removeRecord(tracker: tracker, to: currentDate)
+            if let recordToRemove = completedTrackers?.first(where: { $0.date == currentDate && $0.trackerId == tracker.trackerId }) {
+                try? trackerRecordStore.remove(recordToRemove)
+            }
             daysCount -= 1
             cell.configRecordInfo(days: daysCount, isDoneToday: false)
         }
         
-        completedTrackers = trackerRecordStore.records as? Set<TrackerRecord>
-        print("🍏completedTrackers\(completedTrackers)🍏")
+        completedTrackers = trackerRecordStore.records
         collectionView.reloadData()
     }
 }
