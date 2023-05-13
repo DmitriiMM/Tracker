@@ -2,6 +2,7 @@ import UIKit
 
 final class NewCategoryViewController: UIViewController {
     weak var delegateTransition: ScreenTransitionProtocol?
+    var editingCategory: TrackerCategory?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -45,6 +46,8 @@ final class NewCategoryViewController: UIViewController {
         view.backgroundColor = .ypWhite
         textField.delegate = self
         
+        textField.text = editingCategory?.title
+        
         addSubviews()
         addConstraints()
     }
@@ -52,8 +55,20 @@ final class NewCategoryViewController: UIViewController {
     @objc private func doneButtonTapped() {
         if textField.hasText {
             if let category = textField.text {
-                dismiss(animated: true) {
-                    self.delegateTransition?.onTransition(value: category, for: "category")
+                if editingCategory == nil {
+                    dismiss(animated: true) {
+                        self.delegateTransition?.onTransition(value: category, for: "category")
+                    }
+                } else {
+                    dismiss(animated: true) {
+                        self.delegateTransition?.onTransition(
+                            value: [
+                                "editingCategory": self.editingCategory?.title,
+                                "editedCategory": category
+                            ],
+                            for: "updatedCategory")
+                        self.editingCategory = nil
+                    }
                 }
             }
         }

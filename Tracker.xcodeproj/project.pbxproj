@@ -42,6 +42,9 @@
 		A37BF99D29F04B010000A3CF /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A37BF99C29F04B010000A3CF /* DateHelper.swift */; };
 		A3C7B3FF29D74DDA0033F251 /* ScreenTransitionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */; };
 		A3C7B40129DA31800033F251 /* MockTrackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C7B40029DA31800033F251 /* MockTrackers.swift */; };
+		A3E4C8352A0D40F300FFE925 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E4C8342A0D40F300FFE925 /* OnboardingViewController.swift */; };
+		A3E4C8592A0E935200FFE925 /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E4C8582A0E935200FFE925 /* CategoriesViewModel.swift */; };
+		A3E4C85B2A0E938500FFE925 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E4C85A2A0E938500FFE925 /* Observable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +85,9 @@
 		A37BF99C29F04B010000A3CF /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
 		A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTransitionProtocol.swift; sourceTree = "<group>"; };
 		A3C7B40029DA31800033F251 /* MockTrackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTrackers.swift; sourceTree = "<group>"; };
+		A3E4C8342A0D40F300FFE925 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		A3E4C8582A0E935200FFE925 /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
+		A3E4C85A2A0E938500FFE925 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +162,7 @@
 				A3C7B3FE29D74DDA0033F251 /* ScreenTransitionProtocol.swift */,
 				A3C7B40029DA31800033F251 /* MockTrackers.swift */,
 				A37BF99C29F04B010000A3CF /* DateHelper.swift */,
+				A3E4C85A2A0E938500FFE925 /* Observable.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -163,6 +170,7 @@
 		A334C62A29CF1A4100484BAA /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A3E4C8342A0D40F300FFE925 /* OnboardingViewController.swift */,
 				A334C62129CF040700484BAA /* TabBarController.swift */,
 				A3122AFF29CC596400C08EEA /* TrackerViewController.swift */,
 				A334C62329CF09D000484BAA /* StatisticViewController.swift */,
@@ -192,6 +200,7 @@
 				A34EB28329D09D0F00A0E475 /* Tracker.swift */,
 				A34EB28529D09E8200A0E475 /* TrackerCategory.swift */,
 				A34EB28729D09EE200A0E475 /* TrackerRecord.swift */,
+				A3E4C8582A0E935200FFE925 /* CategoriesViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -297,6 +306,7 @@
 				A33894A629D498F6003A8A6A /* NewCategoryViewController.swift in Sources */,
 				A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */,
 				A34EB28C29D0BC6E00A0E475 /* NewTrackerViewController.swift in Sources */,
+				A3E4C8592A0E935200FFE925 /* CategoriesViewModel.swift in Sources */,
 				A336A68A29D2062E00455A29 /* SuplementeryCollectionViewCell.swift in Sources */,
 				A3122B0029CC596400C08EEA /* TrackerViewController.swift in Sources */,
 				A37BF99B29ED28CB0000A3CF /* TrackerRecordStore.swift in Sources */,
@@ -312,8 +322,10 @@
 				A34EB28E29D0E92900A0E475 /* SuplementaryCollection.swift in Sources */,
 				A34EB28829D09EE200A0E475 /* TrackerRecord.swift in Sources */,
 				A3C7B40129DA31800033F251 /* MockTrackers.swift in Sources */,
+				A3E4C85B2A0E938500FFE925 /* Observable.swift in Sources */,
 				A37BF99329E723C30000A3CF /* WeekDaysMarshalling.swift in Sources */,
 				A33894A829D5FCF6003A8A6A /* ScheduleViewController.swift in Sources */,
+				A3E4C8352A0D40F300FFE925 /* OnboardingViewController.swift in Sources */,
 				A3122B1229CCC5DC00C08EEA /* SupplementaryView.swift in Sources */,
 				A34EB28429D09D0F00A0E475 /* Tracker.swift in Sources */,
 				A3122AFE29CC596400C08EEA /* SceneDelegate.swift in Sources */,

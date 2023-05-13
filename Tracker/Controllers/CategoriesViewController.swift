@@ -3,8 +3,9 @@ import UIKit
 final class CategoriesViewController: UIViewController {
     private var heightTableView: Int = -1
     weak var delegateTransition: ScreenTransitionProtocol?
-    var categories: [String]?
     var checkmarkedCell: IndexPath?
+    
+    private var viewModel: CategoriesViewModel!
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -25,10 +26,8 @@ final class CategoriesViewController: UIViewController {
     private lazy var emptyCategoryLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = """
-                    Привычки и события можно
-                    объединить по смыслу
-                    """
+        label.text = "Привычки и события можно объединить по смыслу"
+        label.numberOfLines = 2
         label.textColor = .ypBlack
         label.textAlignment = .center
         
@@ -45,7 +44,7 @@ final class CategoriesViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.separatorColor = .ypGray
         tableView.backgroundColor = .ypWhite
-
+        
         return tableView
     }()
     
@@ -65,10 +64,17 @@ final class CategoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if categories?.count != 0 {
-            heightTableView = categories!.count * 75 - 1
-            emptyCategoryLabel.isHidden = true
-            emptyCategoryImageView.isHidden = true
+        viewModel = CategoriesViewModel()
+        viewModel.$categories.bind { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.tableView.reloadData()
+        }
+        
+        if self.viewModel.categories?.count != 0 {
+            self.heightTableView = self.viewModel.categories!.count * 75 - 1
+            self.emptyCategoryLabel.isHidden = true
+            self.emptyCategoryImageView.isHidden = true
         }
         
         view.backgroundColor = .ypWhite
@@ -81,6 +87,32 @@ final class CategoriesViewController: UIViewController {
         let newCategoryVC = NewCategoryViewController()
         newCategoryVC.delegateTransition = self
         present(newCategoryVC, animated: true)
+    }
+    
+    private func editCategory(_ category: TrackerCategory) {
+        let newCategoryVC = NewCategoryViewController()
+        newCategoryVC.delegateTransition = self
+        newCategoryVC.editingCategory = category
+        
+        present(newCategoryVC, animated: true)
+    }
+    
+    private func deleteCategory(_ category: TrackerCategory) {
+        let alert = UIAlertController(
+            title: nil,
+            message: "Эта категория точно не нужна?",
+            preferredStyle: .actionSheet
+        )
+        
+        let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            self?.viewModel.deleteCategory(category: category)
+        }
+        
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
     }
     
     private func addSubviews() {
@@ -104,6 +136,8 @@ final class CategoriesViewController: UIViewController {
             
             emptyCategoryLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyCategoryLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyCategoryLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyCategoryLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
             emptyCategoryImageView.bottomAnchor.constraint(equalTo: emptyCategoryLabel.topAnchor, constant: -8),
             emptyCategoryImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -114,7 +148,7 @@ final class CategoriesViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView)),
-
+            
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -131,23 +165,38 @@ extension CategoriesViewController: UITableViewDelegate {
         delegateTransition?.onTransition(value: checkmarkedCell, for: "checkmark")
         dismiss(animated: true) {
             self.delegateTransition?.onTransition(value: cell.textLabel?.text, for: "category")
-            self.delegateTransition?.onTransition(value: self.categories, for: "categories")
+            self.delegateTransition?.onTransition(value: self.viewModel.categories, for: "categories")
         }
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let category = viewModel.categories?[indexPath.row] else { return nil }
+        
+        return UIContextMenuConfiguration(actionProvider:  { _ in
+            UIMenu(children: [
+                UIAction(title: "Редактировать") { [weak self] _ in
+                    self?.editCategory(category)
+                },
+                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                    self?.deleteCategory(category)
+                }
+            ])
+        })
     }
 }
 
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return categories?.count ?? 0
+        return viewModel.categories?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else { return UITableViewCell() }
-       
+        
         cell.backgroundColor = .ypBackground
         
-        cell.textLabel?.text = categories?[indexPath.row]
+        cell.textLabel?.text = viewModel.categories?[indexPath.row].title
         cell.textLabel?.font = UIFont.appFont(.regular, withSize: 17)
         if indexPath == checkmarkedCell {
             cell.accessoryType = .checkmark
@@ -163,38 +212,31 @@ extension CategoriesViewController: UITableViewDataSource {
 
 extension CategoriesViewController: ScreenTransitionProtocol {
     func onTransition<T>(value: T, for key: String) {
-        if let stringValue = value as? String {
-            if let notNilCategories = categories {
-                if !notNilCategories.contains(where: { $0 == stringValue }) {
-                    categories?.append(stringValue)
-                    
-                    heightTableView += 75
-                    
-                    if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
-                        heightConstraint.constant = CGFloat(heightTableView)
-                        tableView.layoutIfNeeded()
-                    }
-                    
-                    emptyCategoryLabel.isHidden = true
-                    emptyCategoryImageView.isHidden = true
-                    
-                    tableView.reloadData()
-                }
-            } else {
-                categories?.append(stringValue)
-                
-                heightTableView += 75
-                
-                if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
-                    heightConstraint.constant = CGFloat(heightTableView)
-                    tableView.layoutIfNeeded()
-                }
-                
-                emptyCategoryLabel.isHidden = true
-                emptyCategoryImageView.isHidden = true
-                
-                tableView.reloadData()
+        switch key {
+        case "category":
+            guard let category = value as? String else { return }
+            viewModel.addNewCategory(with: category)
+            
+            heightTableView += 75
+            
+            if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
+                heightConstraint.constant = CGFloat(heightTableView)
+                tableView.layoutIfNeeded()
             }
+            
+            emptyCategoryLabel.isHidden = true
+            emptyCategoryImageView.isHidden = true
+            
+        case "updatedCategory":
+            guard let category = value as? [String: String],
+                  let editingCategory = category["editingCategory"],
+                  let editedCategory = category["editedCategory"]
+            else { return }
+            
+            viewModel.editCategory(from: editingCategory, with: editedCategory)
+            
+        default:
+            break
         }
     }
 }

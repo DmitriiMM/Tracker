@@ -241,7 +241,6 @@ extension NewTrackerViewController: UITableViewDelegate {
         case 0: // "Категория"
             let categoriesVC = CategoriesViewController()
             categoriesVC.delegateTransition = self
-            categoriesVC.categories = categories
             categoriesVC.checkmarkedCell = lastCategory
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
