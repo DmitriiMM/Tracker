@@ -1,9 +1,13 @@
 import UIKit
 
+protocol ScheduleViewControllerDelegate: AnyObject {
+    func didSelect(schedule: [String]?)
+}
+
 final class ScheduleViewController: UIViewController {
     private let days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     private var schedule: [String] = []
-    weak var delegateTransition: ScreenTransitionProtocol?
+    weak var delegate: ScheduleViewControllerDelegate?
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -53,9 +57,8 @@ final class ScheduleViewController: UIViewController {
     }
     
     @objc private func doneButtonTapped() {
-        dismiss(animated: true) {
-            self.delegateTransition?.onTransition(value: self.schedule, for: "schedule")
-        }
+        delegate?.didSelect(schedule: schedule)
+        dismiss(animated: true)
     }
     
     private func addSubviews() {

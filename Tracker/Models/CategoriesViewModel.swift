@@ -1,23 +1,22 @@
-import UIKit
+import Foundation
 
 final class CategoriesViewModel {
     
     @Observable
     private(set) var categories: [TrackerCategory]?
     
-    private let categoryStore: TrackerCategoryStore
-    private let categoriesViewController = CategoriesViewController()
+    @Observable
+    private(set) var checkmarkedCell: IndexPath?
     
-    convenience init() {
-        let categoryStore = TrackerCategoryStore(
-            context: (UIApplication.shared.delegate as! AppDelegate).persistantConteiner.viewContext
-        )
-        self.init(categoryStore: categoryStore)
-    }
+    private let categoryStore: TrackerCategoryStore
     
     init(categoryStore: TrackerCategoryStore) {
         self.categoryStore = categoryStore
         categories = getCategoriesFromStore()
+    }
+    
+    func selectCategory(at indexPath: IndexPath) {
+        checkmarkedCell = indexPath
     }
     
     func addNewCategory(with label: String) {

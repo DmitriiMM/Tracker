@@ -11,7 +11,7 @@ final class TrackerStore: NSObject {
     private var movedIndexes: Set<StoreUpdate.Move>?
     
     convenience override init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistantConteiner.viewContext
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         self.init(context: context)
     }
     

@@ -1,7 +1,12 @@
 import UIKit
 
+protocol NewCategoryViewControllerDelegate: AnyObject {
+    func create(newCategory: String?)
+    func update(editingCategory: String?, with editedCategory: String?)
+}
+
 final class NewCategoryViewController: UIViewController {
-    weak var delegateTransition: ScreenTransitionProtocol?
+    weak var delegate: NewCategoryViewControllerDelegate?
     var editingCategory: TrackerCategory?
     
     private lazy var titleLabel: UILabel = {
@@ -56,20 +61,12 @@ final class NewCategoryViewController: UIViewController {
         if textField.hasText {
             if let category = textField.text {
                 if editingCategory == nil {
-                    dismiss(animated: true) {
-                        self.delegateTransition?.onTransition(value: category, for: "category")
-                    }
+                    delegate?.create(newCategory: category)
                 } else {
-                    dismiss(animated: true) {
-                        self.delegateTransition?.onTransition(
-                            value: [
-                                "editingCategory": self.editingCategory?.title,
-                                "editedCategory": category
-                            ],
-                            for: "updatedCategory")
-                        self.editingCategory = nil
-                    }
+                    delegate?.update(editingCategory: editingCategory?.title, with: category)
+                    editingCategory = nil
                 }
+                dismiss(animated: true)
             }
         }
     }

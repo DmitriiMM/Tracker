@@ -155,10 +155,21 @@ final class TrackerViewController: UIViewController {
     
     @objc private func addTrackerButtonTapped() {
         let typeNewTrackerVC = TypeNewTrackerViewController()
-        typeNewTrackerVC.delegateTransition = self
+        typeNewTrackerVC.delegate = self
         let categories = categories.map { $0.title }
         typeNewTrackerVC.categories = categories
         present(typeNewTrackerVC, animated: true)
+    }
+    
+    private func addNewTracker() {
+        guard let newTracker = newTracker, let titleNewCategory = titleNewCategory else { return }
+        
+        try! trackerCategoryStore.saveTracker(tracker: newTracker, to: titleNewCategory)
+        categories = trackerCategoryStore.categories
+        
+        collectionView.reloadData()
+        self.newTracker = nil
+        self.titleNewCategory = nil
     }
     
     private func addSubviews() {
@@ -366,30 +377,15 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension TrackerViewController: ScreenTransitionProtocol {
-    func onTransition<T>(value: T, for key: String) {
-        dismiss(animated: true)
-        
-        switch key {
-        case "newTracker":
-            newTracker = value as? Tracker
-        case "newCategory":
-            titleNewCategory = value as? String
-        default:
-            break
-        }
-        
+extension TrackerViewController: TypeNewTrackerViewControllerDelegate {
+    func create(newTracker: Tracker?) {
+        self.newTracker = newTracker
         addNewTracker()
     }
     
-    func addNewTracker() {
-        guard let newTracker = newTracker, let titleNewCategory = titleNewCategory else { return }
-        
-        try! trackerCategoryStore.saveTracker(tracker: newTracker, to: titleNewCategory)
-        categories = trackerCategoryStore.categories
-        
-        collectionView.reloadData()
-        self.newTracker = nil
-        self.titleNewCategory = nil
+    func create(newCategory: String?) {
+        titleNewCategory = newCategory
+        addNewTracker()
+        dismiss(animated: true)
     }
 }

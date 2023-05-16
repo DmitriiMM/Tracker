@@ -1,7 +1,12 @@
 import UIKit
 
+protocol SupplementaryCollectionDelegate: AnyObject {
+    func didSelect(emoji: String?)
+    func didSelect(color: UIColor?)
+}
+
 final class SupplementaryCollection: NSObject {
-    weak var delegateTransition: ScreenTransitionProtocol?
+    weak var delegate: SupplementaryCollectionDelegate?
     private let params = GeometricParams(
         cellCount: 6,
         leftInset: 25,
@@ -122,7 +127,7 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
                 }
                 
                 cell.backgroundColor = .ypLightGray
-                delegateTransition?.onTransition(value: cell.label.text, for: "emoji")
+                delegate?.didSelect(emoji: cell.label.text)
                 
             case 1:
                 for item in 0..<collectionView.numberOfItems(inSection: 1) {
@@ -133,7 +138,7 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
                 
                 cell.layer.borderColor = cell.contentView.backgroundColor?.withAlphaComponent(0.3).cgColor
                 cell.layer.borderWidth = 3
-                delegateTransition?.onTransition(value: cell.contentView.backgroundColor, for: "color")
+                delegate?.didSelect(color: cell.contentView.backgroundColor)
                 
             default:
                 break

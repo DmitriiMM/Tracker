@@ -6,7 +6,7 @@ final class TrackerRecordStore: NSObject {
     private let trackerStore = TrackerStore()
     
     convenience override init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistantConteiner.viewContext
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         self.init(context: context)
     }
     

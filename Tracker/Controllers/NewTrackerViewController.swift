@@ -1,9 +1,13 @@
 import UIKit
 
+protocol NewTrackerViewControllerDelegate: AnyObject {
+    func dismiss()
+    func create(newTracker: Tracker?)
+    func create(newCategory: String?)
+}
+
 final class NewTrackerViewController: UIViewController {
     private var currentCategory: String?
-    private var currentSchedule: [String]?
-    private var category: String?
     private var trackerColor: UIColor?
     private var trackerEmoji: String?
     private var trackerText: String?
@@ -15,8 +19,7 @@ final class NewTrackerViewController: UIViewController {
     private var chosenEmoji = false
     private var chosenColor = false
     
-    weak var delegateTransition: ScreenTransitionProtocol?
-    var categories: [String]?
+    weak var delegate: NewTrackerViewControllerDelegate?
     var lastCategory: IndexPath?
     var typeOfNewTracker: TypeTracker?
     private var heightTableView: Int = 74
@@ -123,7 +126,7 @@ final class NewTrackerViewController: UIViewController {
         
         collectionView.delegate = helper
         collectionView.dataSource = helper
-        helper.delegateTransition = self
+        helper.delegate = self
         
         view.backgroundColor = .ypWhite
         
@@ -136,13 +139,13 @@ final class NewTrackerViewController: UIViewController {
     }
     
     @objc private func cancelButtonTapped() {
-        delegateTransition?.onTransition(value: "", for: "dismiss")
         dismiss(animated: true)
+        delegate?.dismiss()
     }
     
     @objc private func createButtonTapped() {
         guard let trackerText = trackerText,
-              let category = category,
+              let category = currentCategory,
               let trackerEmoji = trackerEmoji,
               let trackerColor = trackerColor
         else {
@@ -172,8 +175,31 @@ final class NewTrackerViewController: UIViewController {
             trackerColor: trackerColor,
             trackerSchedule: trackerSchedule
         )
-        delegateTransition?.onTransition(value: newTracker, for: "newTracker")
-        delegateTransition?.onTransition(value: category, for: "newCategory")
+        
+        delegate?.create(newTracker: newTracker)
+        delegate?.create(newCategory: category)
+    }
+    
+    private func makeCreateButtonEnabled() {
+        switch typeOfNewTracker {
+        case .repeatingTracker:
+            if chosenName == true && chosenCategory == true && chosenSchedule == true && chosenEmoji == true && chosenColor == true {
+                createButton.backgroundColor = .ypBlack
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            } else {
+                createButton.backgroundColor = .ypGray
+                createButton.setTitleColor(.white, for: .normal)
+            }
+        case .onetimeTracker:
+            if chosenName == true && chosenCategory == true && chosenEmoji == true && chosenColor == true {
+                createButton.backgroundColor = .ypBlack
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            } else {
+                createButton.backgroundColor = .ypGray
+                createButton.setTitleColor(.white, for: .normal)
+            }
+        case .none: break
+        }
     }
     
     private func addSubviews() {
@@ -239,13 +265,16 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0: // "Категория"
-            let categoriesVC = CategoriesViewController()
-            categoriesVC.delegateTransition = self
-            categoriesVC.checkmarkedCell = lastCategory
+            guard let categoriesVC = SomeCoordinator.start(
+                with: SomeConfiguration(
+                    lastCategory: lastCategory ?? nil)
+            ) as? CategoriesViewController
+            else { return }
+            categoriesVC.delegate = self
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
             let scheduleVC = ScheduleViewController()
-            scheduleVC.delegateTransition = self
+            scheduleVC.delegate = self
             present(scheduleVC, animated: true)
         default: break
         }
@@ -276,10 +305,10 @@ extension NewTrackerViewController: UITableViewDataSource {
             
         case 1:
             cell.textLabel?.text = "Расписание"
-            if currentSchedule?.count == 7 {
+            if trackerSchedule?.count == 7 {
                 cell.detailTextLabel?.text = "Каждый день"
             } else {
-                let sortedDays = currentSchedule?.sorted { first, second in
+                let sortedDays = trackerSchedule?.sorted { first, second in
                     let orderedDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
                     return orderedDays.firstIndex(of: first)! < orderedDays.firstIndex(of: second)!
                 }
@@ -324,51 +353,38 @@ extension NewTrackerViewController: UITextFieldDelegate {
     }
 }
 
-extension NewTrackerViewController: ScreenTransitionProtocol {
-    func onTransition<T>(value: T, for key: String) {
-        switch key {
-        case "categories":
-            categories = value as? [String]
-        case "category":
-            currentCategory = value as? String
-            tableView.reloadData()
-            category = value as? String
-            chosenCategory = true
-        case "color":
-            trackerColor = value as? UIColor
-            chosenColor = true
-        case "emoji":
-            trackerEmoji = value as? String
-            chosenEmoji = true
-        case "schedule":
-            currentSchedule = value as? [String]
-            tableView.reloadData()
-            chosenSchedule = true
-            trackerSchedule = value as? [String]
-        case "checkmark":
-            lastCategory = value as? IndexPath
-        default:
-            break
-        }
-        
-        switch typeOfNewTracker {
-        case .repeatingTracker:
-            if chosenName == true && chosenCategory == true && chosenSchedule == true && chosenEmoji == true && chosenColor == true {
-                createButton.backgroundColor = .ypBlack
-                createButton.setTitleColor(.ypWhite, for: .normal)
-            } else {
-                createButton.backgroundColor = .ypGray
-                createButton.setTitleColor(.white, for: .normal)
-            }
-        case .onetimeTracker:
-            if chosenName == true && chosenCategory == true && chosenEmoji == true && chosenColor == true {
-                createButton.backgroundColor = .ypBlack
-                createButton.setTitleColor(.ypWhite, for: .normal)
-            } else {
-                createButton.backgroundColor = .ypGray
-                createButton.setTitleColor(.white, for: .normal)
-            }
-        case .none: break
-        }
+extension NewTrackerViewController: CategoriesViewControllerDelegate {
+    func didSelectCategory(at indexPath: IndexPath?) {
+        lastCategory = indexPath
+    }
+    
+    func didSelectCategory(with name: String?) {
+        currentCategory = name
+        chosenCategory = true
+        makeCreateButtonEnabled()
+        tableView.reloadData()
+    }
+}
+
+extension NewTrackerViewController: ScheduleViewControllerDelegate {
+    func didSelect(schedule: [String]?) {
+        trackerSchedule = schedule
+        chosenSchedule = true
+        makeCreateButtonEnabled()
+        tableView.reloadData()
+    }
+}
+
+extension NewTrackerViewController: SupplementaryCollectionDelegate {
+    func didSelect(emoji: String?) {
+        trackerEmoji = emoji
+        chosenEmoji = true
+        makeCreateButtonEnabled()
+    }
+    
+    func didSelect(color: UIColor?) {
+        trackerColor = color
+        chosenColor = true
+        makeCreateButtonEnabled()
     }
 }

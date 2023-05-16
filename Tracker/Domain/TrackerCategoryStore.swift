@@ -11,7 +11,7 @@ final class TrackerCategoryStore: NSObject {
     weak var delegate: TrackerCategoryStoreDelegate?
     
     convenience override init() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistantConteiner.viewContext
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         self.init(context: context)
     }
     
