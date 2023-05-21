@@ -7,7 +7,6 @@ protocol NewTrackerViewControllerDelegate: AnyObject {
 }
 
 final class NewTrackerViewController: UIViewController {
-//    private var currentCategory: String?
     private var trackerColor: UIColor?
     private var trackerEmoji: String?
     private var trackerText: String?
@@ -20,7 +19,6 @@ final class NewTrackerViewController: UIViewController {
     private var chosenColor = false
     
     weak var delegate: NewTrackerViewControllerDelegate?
-//    var lastCategory: IndexPath?
     var lastCategory: String?
     var typeOfNewTracker: TypeTracker?
     private var heightTableView: Int = 74
@@ -266,10 +264,14 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0: // "Категория"
-//            guard let categoriesVC = CategoryCoordinator.assemble() as? CategoriesViewController else { return }
-            guard let categoriesVC = CategoryCoordinator.start(with: CategoryConfiguration(lastCategory: lastCategory)) as? CategoriesViewController else { return }
+            guard
+                let categoriesVC = CategoryCoordinator.start(
+                    with: CategoryConfiguration(lastCategory: lastCategory)
+                ) as? CategoriesViewController
+            else {
+                return
+            }
             categoriesVC.delegate = self
-//            categoriesVC.viewModel.checkmarkAt = lastCategory
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
             let scheduleVC = ScheduleViewController()
@@ -351,12 +353,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
 }
 
 extension NewTrackerViewController: CategoriesViewControllerDelegate {
-//    func didSelectCategory(at indexPath: IndexPath?) {
-//        lastCategory = indexPath
-//    }
-    
     func didSelectCategory(with name: String?) {
-//        currentCategory = name
         lastCategory = name
         chosenCategory = true
         makeCreateButtonEnabled()

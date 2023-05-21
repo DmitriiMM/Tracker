@@ -117,9 +117,14 @@ final class TrackerCategoryStore: NSObject {
     }
     
     func editCategory(from existingLabel: String, with label: String) throws {
+        let existingCategoryCD = try! fetchCategory(with: existingLabel)
         try makeCategory(with: label)
-        let categoryCD = try! fetchCategory(with: existingLabel)
-        let category = try! fetchCategories(from: categoryCD!)
+        let updatedCategoryCD = try! fetchCategory(with: label)
+        
+        updatedCategoryCD?.trackers = existingCategoryCD?.trackers
+        try context.save()
+        
+        let category = try! fetchCategories(from: existingCategoryCD!)
         try deleteCategory(with: category)
     }
 }
