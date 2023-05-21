@@ -1,8 +1,8 @@
 import UIKit
 //
-//struct SomeConfiguration {
-//    let lastCategory: IndexPath?
-//}
+struct CategoryConfiguration {
+    let lastCategory: IndexPath?
+}
 //
 //final class SomeCoordinator {
 //    static func start(with configuration: SomeConfiguration) -> UIViewController {
@@ -19,14 +19,15 @@ import UIKit
 //}
 
 final class CategoryCoordinator {
-//    static func start() -> UIViewController {
-//        let viewController = assemble()
-//        return viewController
-//    }
+    static func start(with configuration: CategoryConfiguration) -> UIViewController {
+        let viewController = assemble(with: configuration)
+        return viewController
+    }
     
-    static func assemble() -> UIViewController {
+    private static func assemble(with configuration: CategoryConfiguration) -> UIViewController {
         let categoryStore = TrackerCategoryStore(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext)
-        let viewModel = CategoriesViewModel(categoryStore: categoryStore)
+        let lastCategory = configuration.lastCategory
+        let viewModel = CategoriesViewModel(categoryStore: categoryStore, lastCategory: lastCategory)
         let viewController = CategoriesViewController(viewModel: viewModel)
         return viewController
     }

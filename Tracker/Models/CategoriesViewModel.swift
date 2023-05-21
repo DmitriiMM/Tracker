@@ -8,10 +8,14 @@ final class CategoriesViewModel {
     @Observable
     private(set) var alertModel: AlertModel?
     
-    var checkmarkAt: IndexPath?
+    @Observable
+    private(set) var checkmarkAt: IndexPath?
+//    private var checkmarkAt: IndexPath?
+    
     private let categoryStore: TrackerCategoryStore
     
-    init(categoryStore: TrackerCategoryStore) {
+    init(categoryStore: TrackerCategoryStore, lastCategory: IndexPath?) {
+        self.checkmarkAt = lastCategory
         self.categoryStore = categoryStore
         categories = getCategoriesFromStore()
     }

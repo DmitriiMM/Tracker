@@ -265,9 +265,10 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0: // "Категория"
-            guard let categoriesVC = CategoryCoordinator.assemble() as? CategoriesViewController else { return }
+//            guard let categoriesVC = CategoryCoordinator.assemble() as? CategoriesViewController else { return }
+            guard let categoriesVC = CategoryCoordinator.start(with: CategoryConfiguration(lastCategory: lastCategory)) as? CategoriesViewController else { return }
             categoriesVC.delegate = self
-            categoriesVC.viewModel.checkmarkAt = lastCategory
+//            categoriesVC.viewModel.checkmarkAt = lastCategory
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
             let scheduleVC = ScheduleViewController()

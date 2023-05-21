@@ -78,6 +78,12 @@ final class CategoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        viewModel.$checkmarkAt.bind { [weak self] _ in
+            guard let self = self else { return }
+            self.delegate?.didSelectCategory(at: self.viewModel.checkmarkAt)
+            self.tableView.reloadData()
+        }
+        
         viewModel.$categories.bind { [weak self] _ in
             guard let self = self else { return }
             
@@ -174,7 +180,7 @@ extension CategoriesViewController: UITableViewDelegate {
         
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         delegate?.didSelectCategory(with: cell.textLabel?.text)
-        delegate?.didSelectCategory(at: viewModel.checkmarkAt)
+//        delegate?.didSelectCategory(at: viewModel.checkmarkAt)
         dismiss(animated: true)
     }
     
