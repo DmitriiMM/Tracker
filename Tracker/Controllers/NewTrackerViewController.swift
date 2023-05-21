@@ -11,7 +11,7 @@ final class NewTrackerViewController: UIViewController {
     private var trackerColor: UIColor?
     private var trackerEmoji: String?
     private var trackerText: String?
-    private var trackerSchedule: [String]?
+    private var trackerSchedule: [Weekday]?
     
     private var chosenName = false
     private var chosenCategory = false
@@ -166,7 +166,7 @@ final class NewTrackerViewController: UIViewController {
         dismiss(animated: true)
     }
     
-    private func createNewTracker(trackerText: String, category: String, trackerSchedule: [String]?, trackerEmoji: String, trackerColor: UIColor) {
+    private func createNewTracker(trackerText: String, category: String, trackerSchedule: [Weekday]?, trackerEmoji: String, trackerColor: UIColor) {
         guard trackerText != "" else { return }
         let newTracker = Tracker(
             trackerId: generateTrackerId(),
@@ -265,12 +265,9 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0: // "Категория"
-            guard let categoriesVC = SomeCoordinator.start(
-                with: SomeConfiguration(
-                    lastCategory: lastCategory ?? nil)
-            ) as? CategoriesViewController
-            else { return }
+            guard let categoriesVC = CategoryCoordinator.assemble() as? CategoriesViewController else { return }
             categoriesVC.delegate = self
+            categoriesVC.viewModel.checkmarkAt = lastCategory
             present(categoriesVC, animated: true)
         case 1: // "Расписание"
             let scheduleVC = ScheduleViewController()
@@ -305,16 +302,14 @@ extension NewTrackerViewController: UITableViewDataSource {
             
         case 1:
             cell.textLabel?.text = "Расписание"
-            if trackerSchedule?.count == 7 {
+            if trackerSchedule == Weekday.allCases {
                 cell.detailTextLabel?.text = "Каждый день"
             } else {
-                let sortedDays = trackerSchedule?.sorted { first, second in
-                    let orderedDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-                    return orderedDays.firstIndex(of: first)! < orderedDays.firstIndex(of: second)!
+                if let trackerSchedule = trackerSchedule {
+                    cell.detailTextLabel?.text = trackerSchedule
+                        .map { $0.shortName }
+                        .joined(separator: ", ")
                 }
-                
-                let days = sortedDays?.joined(separator: ", ")
-                cell.detailTextLabel?.text = days
             }
             
         default:
@@ -367,7 +362,7 @@ extension NewTrackerViewController: CategoriesViewControllerDelegate {
 }
 
 extension NewTrackerViewController: ScheduleViewControllerDelegate {
-    func didSelect(schedule: [String]?) {
+    func didSelect(schedule: [Weekday]?) {
         trackerSchedule = schedule
         chosenSchedule = true
         makeCreateButtonEnabled()

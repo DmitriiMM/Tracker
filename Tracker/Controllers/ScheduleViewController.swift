@@ -1,12 +1,61 @@
 import UIKit
 
+enum Weekday: String, CaseIterable {
+    case monday = "Понедельник"
+    case tuesday = "Вторник"
+    case wednesday = "Среда"
+    case thursday = "Четверг"
+    case friday = "Пятница"
+    case saturday = "Суббота"
+    case sunday = "Воскресенье"
+
+    var shortName: String {
+        switch self {
+        case .monday:
+            return "Пн"
+        case .tuesday:
+            return "Вт"
+        case .wednesday:
+            return "Ср"
+        case .thursday:
+            return "Чт"
+        case .friday:
+            return "Пт"
+        case .saturday:
+            return "Сб"
+        case .sunday:
+            return "Вс"
+        }
+    }
+    
+    var indexDay: Int {
+        switch self {
+        case .monday:
+            return 1
+        case .tuesday:
+            return 2
+        case .wednesday:
+            return 3
+        case .thursday:
+            return 4
+        case .friday:
+            return 5
+        case .saturday:
+            return 6
+        case .sunday:
+            return 7
+        }
+    }
+}
+
+
 protocol ScheduleViewControllerDelegate: AnyObject {
-    func didSelect(schedule: [String]?)
+    func didSelect(schedule: [Weekday]?)
 }
 
 final class ScheduleViewController: UIViewController {
-    private let days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    private var schedule: [String] = []
+    private let days: [Weekday] = Weekday.allCases
+    private var schedule: [Weekday] = []
     weak var delegate: ScheduleViewControllerDelegate?
     
     private lazy var titleLabel: UILabel = {
@@ -109,7 +158,7 @@ extension ScheduleViewController: UITableViewDataSource {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
         cell.backgroundColor = .ypBackground
-        cell.textLabel?.text = days[indexPath.row]
+        cell.textLabel?.text = days[indexPath.row].rawValue
         cell.textLabel?.font = UIFont.appFont(.regular, withSize: 17)
         cell.accessoryView = switcher
         
@@ -127,24 +176,24 @@ extension ScheduleViewController: UITableViewDataSource {
             doneButton.isEnabled = true
             
             switch sender.tag {
-            case 0: schedule.append("Пн")
-            case 1: schedule.append("Вт")
-            case 2: schedule.append("Ср")
-            case 3: schedule.append("Чт")
-            case 4: schedule.append("Пт")
-            case 5: schedule.append("Сб")
-            case 6: schedule.append("Вс")
+            case 0: schedule.append(.monday)
+            case 1: schedule.append(.tuesday)
+            case 2: schedule.append(.wednesday)
+            case 3: schedule.append(.thursday)
+            case 4: schedule.append(.friday)
+            case 5: schedule.append(.saturday)
+            case 6: schedule.append(.sunday)
             default: break
             }
         } else {
             switch sender.tag {
-            case 0: schedule.removeAll { $0 == "Пн" }
-            case 1: schedule.removeAll { $0 == "Вт" }
-            case 2: schedule.removeAll { $0 == "Ср" }
-            case 3: schedule.removeAll { $0 == "Чт" }
-            case 4: schedule.removeAll { $0 == "Пт" }
-            case 5: schedule.removeAll { $0 == "Сб" }
-            case 6: schedule.removeAll { $0 == "Вс" }
+            case 0: schedule.removeAll { $0 == .monday }
+            case 1: schedule.removeAll { $0 == .tuesday }
+            case 2: schedule.removeAll { $0 == .wednesday }
+            case 3: schedule.removeAll { $0 == .thursday }
+            case 4: schedule.removeAll { $0 == .friday }
+            case 5: schedule.removeAll { $0 == .saturday }
+            case 6: schedule.removeAll { $0 == .sunday }
             default: break
             }
         }

@@ -2,7 +2,8 @@ import UIKit
 
 final class TrackerViewController: UIViewController {
     private var currentDate = String()
-    private var categories: [TrackerCategory] = [] //mockTrackers
+    private var categories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = []
     private var newTracker: Tracker?
     private var titleNewCategory: String?
     private var memoryTrackerByСategory: [TrackerCategory] = []
@@ -104,21 +105,22 @@ final class TrackerViewController: UIViewController {
         currentDate = DateHelper().dateFormatter.string(from: Date())
       
         categories = trackerCategoryStore.categories
+        visibleCategories = categories
         completedTrackers = trackerRecordStore.records
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let weekday = sender.calendar.component(.weekday, from: sender.date)
         
-        var day = "Day"
+        var day: Weekday = .monday
         switch weekday {
-        case 1: day = "Вс"
-        case 2: day = "Пн"
-        case 3: day = "Вт"
-        case 4: day = "Ср"
-        case 5: day = "Чт"
-        case 6: day = "Пт"
-        case 7: day = "Сб"
+        case 1: day = .monday
+        case 2: day = .tuesday
+        case 3: day = .wednesday
+        case 4: day = .thursday
+        case 5: day = .friday
+        case 6: day = .saturday
+        case 7: day = .sunday
         default: break
         }
         
@@ -127,7 +129,7 @@ final class TrackerViewController: UIViewController {
             var filterTrackers: [Tracker] = []
             for tracker in category.trackers {
                 if let schedule = tracker.trackerSchedule {
-                    if schedule.contains(where: { $0 == day }) {
+                    if schedule.contains(where: { $0.rawValue == day.rawValue }) {
                         filterTrackers.append(tracker)
                     }
                 }
@@ -146,7 +148,7 @@ final class TrackerViewController: UIViewController {
                 categories.remove(at: index)
             }
         }
-        
+        visibleCategories = categories
         collectionView.reloadData()
         dismiss(animated: true) {
             self.categories = self.memoryTrackerByСategory
@@ -163,10 +165,13 @@ final class TrackerViewController: UIViewController {
     
     private func addNewTracker() {
         guard let newTracker = newTracker, let titleNewCategory = titleNewCategory else { return }
-        
-        try! trackerCategoryStore.saveTracker(tracker: newTracker, to: titleNewCategory)
+        do {
+            try trackerCategoryStore.saveTracker(tracker: newTracker, to: titleNewCategory)
+        } catch {
+            print(error.localizedDescription)
+        }
         categories = trackerCategoryStore.categories
-        
+        visibleCategories = categories
         collectionView.reloadData()
         self.newTracker = nil
         self.titleNewCategory = nil
@@ -241,7 +246,7 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        var filteredCategories = categories
+        var filteredCategories = visibleCategories
         if self.searchText.count < searchBar.text?.count ?? 0 {
             self.searchText = searchText.lowercased()
             for (index, char) in searchText.enumerated() {
@@ -270,7 +275,7 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
             filteredCategories = newFilteredCategories
         }
         
-        categories = filteredCategories
+        visibleCategories = filteredCategories
         collectionView.reloadData()
     }
     
@@ -315,17 +320,17 @@ extension TrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         collectionView.isHidden = categories.count == 0 ? true : false
         
-        return categories.count
+        return visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        categories[section].trackers.count
+        visibleCategories[section].trackers.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell().identifier, for: indexPath) as? TrackerCollectionViewCell else { return UICollectionViewCell() }
         
-        let tracker = categories[indexPath.section].trackers[indexPath.row]
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers?.filter { $0.trackerId == tracker.trackerId }.count ?? 0
         let isDoneToday = (completedTrackers?.contains(where: { $0.trackerId == tracker.trackerId && $0.trackerId == tracker.trackerId }) ?? false) ? true : false
         cell.confugureSubviews(with: tracker)
@@ -340,7 +345,7 @@ extension TrackerViewController: UICollectionViewDataSource {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "header", for: indexPath) as? SupplementaryView
         guard let view = view else { return UICollectionReusableView() }
         
-        view.titleLabel.text = categories[indexPath.section].title
+        view.titleLabel.text = visibleCategories[indexPath.section].title
 
         return view
     }

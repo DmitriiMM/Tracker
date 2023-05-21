@@ -7,7 +7,7 @@ protocol CategoriesViewControllerDelegate: AnyObject {
 
 final class CategoriesViewController: UIViewController {
     private var heightTableView: Int = -1
-    var checkmarkedCell: IndexPath?
+    private var tableViewHeightConstraint: NSLayoutConstraint?
     
     weak var delegate: CategoriesViewControllerDelegate?
     var viewModel: CategoriesViewModel
@@ -66,9 +66,8 @@ final class CategoriesViewController: UIViewController {
         return button
     }()
     
-    init(viewModel: CategoriesViewModel, lastCategory: IndexPath?) {
+    init(viewModel: CategoriesViewModel) {
         self.viewModel = viewModel
-        checkmarkedCell = lastCategory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -85,25 +84,22 @@ final class CategoriesViewController: UIViewController {
             self.tableView.reloadData()
         }
         
-        viewModel.$checkmarkedCell.bind { [weak self] _ in
+        viewModel.$alertModel.bind { [weak self] _ in
             guard let self = self else { return }
-            self.delegate?.didSelectCategory(at: self.viewModel.checkmarkedCell)
-            self.tableView.reloadData()
+            AlertPresenter().show(controller: self, model: self.viewModel.alertModel!)
+            self.deleteRow()
         }
         
-        if self.viewModel.categories?.count != 0 {
-            self.heightTableView = self.viewModel.categories!.count * 75 - 1
-            self.emptyCategoryLabel.isHidden = true
-            self.emptyCategoryImageView.isHidden = true
+        if viewModel.categories?.count != 0 {
+           heightTableView = viewModel.categories!.count * 75 - 1
+           emptyCategoryLabel.isHidden = true
+           emptyCategoryImageView.isHidden = true
         }
         
         view.backgroundColor = .ypWhite
         
         addSubviews()
         addConstraints()
-        
-        guard let checkmarkedCell = checkmarkedCell else { return }
-        viewModel.selectCategory(at: checkmarkedCell)
     }
     
     @objc private func addCategoryButtonTapped() {
@@ -120,19 +116,11 @@ final class CategoriesViewController: UIViewController {
         present(newCategoryVC, animated: true)
     }
     
-    private func deleteCategory(_ category: TrackerCategory) {
-        let alertModel = AlertModel(
-            title: nil,
-            message: "Эта категория точно не нужна?",
-            buttonText: "Удалить",
-            completion: { [weak self] _ in
-                self?.viewModel.deleteCategory(category: category)
-            },
-            cancelText: "Отменить",
-            cancelCompletion: nil
-        )
-        
-        AlertPresenter().show(controller: self, model: alertModel)
+    private func deleteRow() {
+        tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
+        guard let tableViewHeightConstraint = tableViewHeightConstraint else { return }
+        tableViewHeightConstraint.constant = CGFloat(heightTableView)
+        tableView.layoutIfNeeded()
     }
     
     private func addSubviews() {
@@ -149,6 +137,9 @@ final class CategoriesViewController: UIViewController {
         emptyCategoryLabel.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         addCategoryButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
+        tableViewHeightConstraint?.isActive = true
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -183,6 +174,7 @@ extension CategoriesViewController: UITableViewDelegate {
         
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         delegate?.didSelectCategory(with: cell.textLabel?.text)
+        delegate?.didSelectCategory(at: viewModel.checkmarkAt)
         dismiss(animated: true)
     }
     
@@ -195,7 +187,7 @@ extension CategoriesViewController: UITableViewDelegate {
                     self?.editCategory(category)
                 },
                 UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
-                    self?.deleteCategory(category)
+                    self?.viewModel.deleteCategory(at: indexPath)
                 }
             ])
         })
@@ -216,7 +208,7 @@ extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else { return UITableViewCell() }
         cell.textLabel?.text = viewModel.categories?[indexPath.row].title
-        cell.accessoryType = indexPath == viewModel.checkmarkedCell ? .checkmark : .none
+        cell.accessoryType = indexPath == viewModel.checkmarkAt ? .checkmark : .none
         
         return cell
     }
@@ -231,22 +223,29 @@ extension CategoriesViewController: NewCategoryViewControllerDelegate {
         guard let category = newCategory else { return }
         viewModel.addNewCategory(with: category)
         
+        tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
         heightTableView += 75
+        guard let tableViewHeightConstraint = tableViewHeightConstraint else { return }
+        tableViewHeightConstraint.constant = CGFloat(heightTableView)
+        tableView.layoutIfNeeded()
         
-        if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
-            heightConstraint.constant = CGFloat(heightTableView)
-            tableView.layoutIfNeeded()
-        }
+    
+//        heightTableView += 75
+//
+////         if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height && $0.relation == .equal && $0.secondItem == nil && $0.secondAttribute == .notAnAttribute }) {
+//           if let heightConstraint = tableViewHeightConstraint {
+//            heightConstraint.constant = CGFloat(heightTableView)
+//            tableView.layoutIfNeeded()
+//        }
         
         emptyCategoryLabel.isHidden = true
         emptyCategoryImageView.isHidden = true
     }
     
-    func update(editingCategory: String?, with editedCategory: String?) {
-        guard let editingCategory = editingCategory,
-              let editedCategory = editedCategory
-        else { return }
-        
+    func update(editingCategory: String, with editedCategory: String) {
         viewModel.editCategory(from: editingCategory, with: editedCategory)
     }
 }
+
+
+//print("🔵\(tableViewHeightConstraint!.constant)")

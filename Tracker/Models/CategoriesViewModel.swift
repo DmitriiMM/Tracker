@@ -6,8 +6,9 @@ final class CategoriesViewModel {
     private(set) var categories: [TrackerCategory]?
     
     @Observable
-    private(set) var checkmarkedCell: IndexPath?
+    private(set) var alertModel: AlertModel?
     
+    var checkmarkAt: IndexPath?
     private let categoryStore: TrackerCategoryStore
     
     init(categoryStore: TrackerCategoryStore) {
@@ -15,8 +16,24 @@ final class CategoriesViewModel {
         categories = getCategoriesFromStore()
     }
     
+    func deleteCategory(at indexPath: IndexPath) {
+        let deletingCategory = categoryStore.categories[indexPath.row]
+        let alertModel = AlertModel(
+            title: nil,
+            message: "Эта категория точно не нужна?",
+            buttonText: "Удалить",
+            completion: { [weak self] _ in
+                self?.deleteCategory(category: deletingCategory)
+            },
+            cancelText: "Отменить",
+            cancelCompletion: nil
+        )
+        
+        self.alertModel = alertModel
+    }
+    
     func selectCategory(at indexPath: IndexPath) {
-        checkmarkedCell = indexPath
+        checkmarkAt = indexPath
     }
     
     func addNewCategory(with label: String) {
@@ -28,7 +45,11 @@ final class CategoriesViewModel {
         }
     }
     
-    func editCategory(from existingLabel: String, with label: String) {
+    func editCategory(from existingLabel: String?, with label: String?) {
+        guard let existingLabel = existingLabel,
+              let label = label
+        else { return }
+        
         do {
             try categoryStore.editCategory(from: existingLabel, with: label)
         } catch {

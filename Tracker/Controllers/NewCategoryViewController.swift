@@ -2,7 +2,7 @@ import UIKit
 
 protocol NewCategoryViewControllerDelegate: AnyObject {
     func create(newCategory: String?)
-    func update(editingCategory: String?, with editedCategory: String?)
+    func update(editingCategory: String, with editedCategory: String)
 }
 
 final class NewCategoryViewController: UIViewController {
@@ -63,7 +63,7 @@ final class NewCategoryViewController: UIViewController {
                 if editingCategory == nil {
                     delegate?.create(newCategory: category)
                 } else {
-                    delegate?.update(editingCategory: editingCategory?.title, with: category)
+                    delegate?.update(editingCategory: editingCategory!.title, with: category)
                     editingCategory = nil
                 }
                 dismiss(animated: true)
