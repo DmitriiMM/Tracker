@@ -8,14 +8,17 @@ final class CategoriesViewModel {
     @Observable
     private(set) var alertModel: AlertModel?
     
-    @Observable
-    private(set) var checkmarkAt: IndexPath?
+//    @Observable
+//    private(set) var checkmarkAt: IndexPath?
 //    private var checkmarkAt: IndexPath?
+    
+    @Observable
+    private(set) var selectedCategoryName: String?
     
     private let categoryStore: TrackerCategoryStore
     
-    init(categoryStore: TrackerCategoryStore, lastCategory: IndexPath?) {
-        self.checkmarkAt = lastCategory
+    init(categoryStore: TrackerCategoryStore, lastCategory: String?) {
+        self.selectedCategoryName = lastCategory
         self.categoryStore = categoryStore
         categories = getCategoriesFromStore()
     }
@@ -36,8 +39,12 @@ final class CategoriesViewModel {
         self.alertModel = alertModel
     }
     
-    func selectCategory(at indexPath: IndexPath) {
-        checkmarkAt = indexPath
+//    func selectCategory(at indexPath: IndexPath) {
+//        checkmarkAt = indexPath
+//    }
+    
+    func selectCategory(with name: String) {
+        selectedCategoryName = name
     }
     
     func addNewCategory(with label: String) {

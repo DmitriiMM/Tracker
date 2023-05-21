@@ -1,7 +1,8 @@
 import UIKit
 //
 struct CategoryConfiguration {
-    let lastCategory: IndexPath?
+//    let lastCategory: IndexPath?
+    let lastCategory: String?
 }
 //
 //final class SomeCoordinator {

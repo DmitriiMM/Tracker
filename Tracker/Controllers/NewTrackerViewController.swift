@@ -7,7 +7,7 @@ protocol NewTrackerViewControllerDelegate: AnyObject {
 }
 
 final class NewTrackerViewController: UIViewController {
-    private var currentCategory: String?
+//    private var currentCategory: String?
     private var trackerColor: UIColor?
     private var trackerEmoji: String?
     private var trackerText: String?
@@ -20,7 +20,8 @@ final class NewTrackerViewController: UIViewController {
     private var chosenColor = false
     
     weak var delegate: NewTrackerViewControllerDelegate?
-    var lastCategory: IndexPath?
+//    var lastCategory: IndexPath?
+    var lastCategory: String?
     var typeOfNewTracker: TypeTracker?
     private var heightTableView: Int = 74
     
@@ -145,7 +146,7 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let trackerText = trackerText,
-              let category = currentCategory,
+              let category = lastCategory,
               let trackerEmoji = trackerEmoji,
               let trackerColor = trackerColor
         else {
@@ -299,7 +300,7 @@ extension NewTrackerViewController: UITableViewDataSource {
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "Категория"
-            cell.detailTextLabel?.text = currentCategory
+            cell.detailTextLabel?.text = lastCategory
             
         case 1:
             cell.textLabel?.text = "Расписание"
@@ -350,12 +351,13 @@ extension NewTrackerViewController: UITextFieldDelegate {
 }
 
 extension NewTrackerViewController: CategoriesViewControllerDelegate {
-    func didSelectCategory(at indexPath: IndexPath?) {
-        lastCategory = indexPath
-    }
+//    func didSelectCategory(at indexPath: IndexPath?) {
+//        lastCategory = indexPath
+//    }
     
     func didSelectCategory(with name: String?) {
-        currentCategory = name
+//        currentCategory = name
+        lastCategory = name
         chosenCategory = true
         makeCreateButtonEnabled()
         tableView.reloadData()

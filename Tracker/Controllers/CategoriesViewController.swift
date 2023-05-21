@@ -1,7 +1,7 @@
 import UIKit
 
 protocol CategoriesViewControllerDelegate: AnyObject {
-    func didSelectCategory(at indexPath: IndexPath?)
+//    func didSelectCategory(at indexPath: IndexPath?)
     func didSelectCategory(with name: String?)
 }
 
@@ -78,9 +78,15 @@ final class CategoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.$checkmarkAt.bind { [weak self] _ in
+//        viewModel.$checkmarkAt.bind { [weak self] _ in
+//            guard let self = self else { return }
+//            self.delegate?.didSelectCategory(at: self.viewModel.checkmarkAt)
+//            self.tableView.reloadData()
+//        }
+        
+        viewModel.$selectedCategoryName.bind { [weak self] _ in
             guard let self = self else { return }
-            self.delegate?.didSelectCategory(at: self.viewModel.checkmarkAt)
+            self.delegate?.didSelectCategory(with: self.viewModel.selectedCategoryName)
             self.tableView.reloadData()
         }
         
@@ -176,10 +182,13 @@ final class CategoriesViewController: UIViewController {
 
 extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.selectCategory(at: indexPath)
+//        viewModel.selectCategory(at: indexPath)
         
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        delegate?.didSelectCategory(with: cell.textLabel?.text)
+        guard let cell = tableView.cellForRow(at: indexPath),
+              let categoryName = cell.textLabel?.text else { return }
+        viewModel.selectCategory(with: categoryName)
+        
+//        delegate?.didSelectCategory(with: cell.textLabel?.text)
 //        delegate?.didSelectCategory(at: viewModel.checkmarkAt)
         dismiss(animated: true)
     }
@@ -214,7 +223,8 @@ extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else { return UITableViewCell() }
         cell.textLabel?.text = viewModel.categories?[indexPath.row].title
-        cell.accessoryType = indexPath == viewModel.checkmarkAt ? .checkmark : .none
+        cell.accessoryType = cell.textLabel?.text == viewModel.selectedCategoryName ? .checkmark : .none
+//        cell.accessoryType = indexPath == viewModel.checkmarkAt ? .checkmark : .none
         
         return cell
     }
