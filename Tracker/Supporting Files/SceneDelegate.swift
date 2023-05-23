@@ -8,7 +8,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+        
+        if !UserDefaults.standard.bool(forKey: "hasShownOnboarding") {
+            UserDefaults.standard.set(true, forKey: "hasShownOnboarding")
+            let onboardingViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            window.rootViewController = onboardingViewController
+        } else {
+            let tabBarVC = TabBarController()
+            window.rootViewController = tabBarVC
+        }
         
         window.makeKeyAndVisible()
         

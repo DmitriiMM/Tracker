@@ -48,6 +48,8 @@ final class CategoriesViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.separatorColor = .ypGray
         tableView.backgroundColor = .ypWhite
+        tableView.alwaysBounceVertical = false
+        tableView.bounces = false
         
         return tableView
     }()
@@ -86,22 +88,28 @@ final class CategoriesViewController: UIViewController {
         viewModel.$categories.bind { [weak self] _ in
             guard let self = self else { return }
             if self.viewModel.categories?.count != 0 {
-                self.heightTableView = self.viewModel.categories!.count * 75 - 1
-                self.tableViewHeightConstraint!.constant = CGFloat(self.heightTableView)
+                self.tableView.isHidden = false
                 self.emptyCategoryLabel.isHidden = true
                 self.emptyCategoryImageView.isHidden = true
+            } else {
+                self.tableView.isHidden = true
+                self.emptyCategoryLabel.isHidden = false
+                self.emptyCategoryImageView.isHidden = false
             }
             
             self.tableView.reloadData()
+            DispatchQueue.main.async {
+                self.tableViewHeightConstraint?.constant = self.tableView.contentSize.height - 1
+            }
         }
         
-        viewModel.$alertModel.bind { [weak self] _ in
-            guard let self = self else { return }
-            AlertPresenter().show(controller: self, model: self.viewModel.alertModel!)
+        viewModel.$alertModel.bind { [weak self] alertModel in
+            guard let self, let alertModel else { return }
+            AlertPresenter().show(controller: self, model: alertModel)
         }
         
-        if viewModel.categories?.count != 0 {
-           heightTableView = viewModel.categories!.count * 75 - 1
+        if let categories = viewModel.categories, categories.count != 0 {
+           heightTableView = categories.count * 75 - 1
            emptyCategoryLabel.isHidden = true
            emptyCategoryImageView.isHidden = true
         }
@@ -112,6 +120,7 @@ final class CategoriesViewController: UIViewController {
         addConstraints()
         
         tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView))
+        tableViewHeightConstraint?.priority = .defaultLow
         tableViewHeightConstraint?.isActive = true
     }
     
@@ -161,6 +170,7 @@ final class CategoriesViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 73),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(lessThanOrEqualTo: addCategoryButton.topAnchor, constant: -16),
             
             addCategoryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),

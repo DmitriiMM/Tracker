@@ -62,9 +62,9 @@ final class NewCategoryViewController: UIViewController {
             if let category = textField.text {
                 if editingCategory == nil {
                     delegate?.create(newCategory: category)
-                } else {
-                    delegate?.update(editingCategory: editingCategory!.title, with: category)
-                    editingCategory = nil
+                } else if let editingCategory = editingCategory {
+                    delegate?.update(editingCategory: editingCategory.title, with: category)
+                    self.editingCategory = nil
                 }
                 dismiss(animated: true)
             }

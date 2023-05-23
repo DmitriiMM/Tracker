@@ -14,8 +14,9 @@
 		A3122B0829CC596600C08EEA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3122B0629CC596600C08EEA /* LaunchScreen.storyboard */; };
 		A3122B1029CC8AB400C08EEA /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3122B0F29CC8AB400C08EEA /* TrackerCollectionViewCell.swift */; };
 		A3122B1229CCC5DC00C08EEA /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3122B1129CCC5DC00C08EEA /* SupplementaryView.swift */; };
+		A32F0EB82A1C08FB003564B9 /* Pages.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32F0EB72A1C08FB003564B9 /* Pages.swift */; };
 		A33081FC2A12846A0076C1C3 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33081FB2A12846A0076C1C3 /* AlertPresenter.swift */; };
-		A33081FE2A1294100076C1C3 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33081FD2A1294100076C1C3 /* Coordinator.swift */; };
+		A33081FE2A1294100076C1C3 /* CategoriesAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33081FD2A1294100076C1C3 /* CategoriesAssembly.swift */; };
 		A334C62229CF040700484BAA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62129CF040700484BAA /* TabBarController.swift */; };
 		A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62329CF09D000484BAA /* StatisticViewController.swift */; };
 		A334C62629CF179B00484BAA /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62529CF179B00484BAA /* UIColor+Extension.swift */; };
@@ -58,8 +59,9 @@
 		A3122B0929CC596600C08EEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Tracker/Supporting Files/Resources/Info.plist"; sourceTree = SOURCE_ROOT; };
 		A3122B0F29CC8AB400C08EEA /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		A3122B1129CCC5DC00C08EEA /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
+		A32F0EB72A1C08FB003564B9 /* Pages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pages.swift; sourceTree = "<group>"; };
 		A33081FB2A12846A0076C1C3 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
-		A33081FD2A1294100076C1C3 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		A33081FD2A1294100076C1C3 /* CategoriesAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesAssembly.swift; sourceTree = "<group>"; };
 		A334C62129CF040700484BAA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A334C62329CF09D000484BAA /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		A334C62529CF179B00484BAA /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
@@ -132,6 +134,16 @@
 			path = Tracker;
 			sourceTree = "<group>";
 		};
+		A32F0EB92A1C0935003564B9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A3E4C8722A1110EC00FFE925 /* OnboardingViewController.swift */,
+				A3E4C8342A0D40F300FFE925 /* PageViewController.swift */,
+				A32F0EB72A1C08FB003564B9 /* Pages.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		A334C62729CF19DB00484BAA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -164,7 +176,7 @@
 				A37BF99C29F04B010000A3CF /* DateHelper.swift */,
 				A3E4C85A2A0E938500FFE925 /* Observable.swift */,
 				A33081FB2A12846A0076C1C3 /* AlertPresenter.swift */,
-				A33081FD2A1294100076C1C3 /* Coordinator.swift */,
+				A33081FD2A1294100076C1C3 /* CategoriesAssembly.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -172,8 +184,7 @@
 		A334C62A29CF1A4100484BAA /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				A3E4C8722A1110EC00FFE925 /* OnboardingViewController.swift */,
-				A3E4C8342A0D40F300FFE925 /* PageViewController.swift */,
+				A32F0EB92A1C0935003564B9 /* Onboarding */,
 				A334C62129CF040700484BAA /* TabBarController.swift */,
 				A3122AFF29CC596400C08EEA /* TrackerViewController.swift */,
 				A334C62329CF09D000484BAA /* StatisticViewController.swift */,
@@ -309,8 +320,9 @@
 				A33894A629D498F6003A8A6A /* NewCategoryViewController.swift in Sources */,
 				A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */,
 				A34EB28C29D0BC6E00A0E475 /* NewTrackerViewController.swift in Sources */,
+				A32F0EB82A1C08FB003564B9 /* Pages.swift in Sources */,
 				A3E4C8592A0E935200FFE925 /* CategoriesViewModel.swift in Sources */,
-				A33081FE2A1294100076C1C3 /* Coordinator.swift in Sources */,
+				A33081FE2A1294100076C1C3 /* CategoriesAssembly.swift in Sources */,
 				A336A68A29D2062E00455A29 /* SuplementeryCollectionViewCell.swift in Sources */,
 				A3122B0029CC596400C08EEA /* TrackerViewController.swift in Sources */,
 				A37BF99B29ED28CB0000A3CF /* TrackerRecordStore.swift in Sources */,

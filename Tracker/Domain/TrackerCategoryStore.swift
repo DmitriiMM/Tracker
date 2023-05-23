@@ -86,8 +86,9 @@ final class TrackerCategoryStore: NSObject {
     func saveTracker(tracker: Tracker, to categoryName: String) throws {
         let trackerCoreData = try trackerStore.makeTracker(from: tracker)
         
-        if let existingCategory = try? fetchCategory(with: categoryName) {
-            var newCoreDataTrackers = existingCategory.trackers!.allObjects as! [TrackerCoreData]
+        if let existingCategory = try? fetchCategory(with: categoryName),
+           let trackers = existingCategory.trackers,
+           var newCoreDataTrackers = trackers.allObjects as? [TrackerCoreData] {
             newCoreDataTrackers.append(trackerCoreData)
             existingCategory.trackers = NSSet(array: newCoreDataTrackers)
         } else {
@@ -96,7 +97,7 @@ final class TrackerCategoryStore: NSObject {
             newCategory.trackers = NSSet(array: [trackerCoreData])
         }
         
-        try! context.save()
+        try context.save()
     }
     
     func makeCategory(with label: String) throws {
@@ -117,14 +118,14 @@ final class TrackerCategoryStore: NSObject {
     }
     
     func editCategory(from existingLabel: String, with label: String) throws {
-        let existingCategoryCD = try! fetchCategory(with: existingLabel)
+        guard let existingCategoryCD = try? fetchCategory(with: existingLabel) else { return }
         try makeCategory(with: label)
-        let updatedCategoryCD = try! fetchCategory(with: label)
+        guard let updatedCategoryCD = try? fetchCategory(with: label) else { return }
         
-        updatedCategoryCD?.trackers = existingCategoryCD?.trackers
+        updatedCategoryCD.trackers = existingCategoryCD.trackers
         try context.save()
         
-        let category = try! fetchCategories(from: existingCategoryCD!)
+        guard let category = try? fetchCategories(from: existingCategoryCD) else { return }
         try deleteCategory(with: category)
     }
 }

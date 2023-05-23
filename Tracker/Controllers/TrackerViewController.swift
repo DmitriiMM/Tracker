@@ -137,14 +137,14 @@ final class TrackerViewController: UIViewController {
             
             let newCategory = TrackerCategory(title: category.title, trackers: filterTrackers)
             if newCategory.title == category.title {
-                let index = categories.firstIndex(where: { $0.title == newCategory.title })!
+                guard let index = categories.firstIndex(where: { $0.title == newCategory.title }) else { return }
                 categories[index] = newCategory
             }
         }
         
         for category in categories {
             if category.trackers.isEmpty {
-                let index = categories.firstIndex(where: { $0.trackers.isEmpty })!
+                guard let index = categories.firstIndex(where: { $0.trackers.isEmpty }) else { return }
                 categories.remove(at: index)
             }
         }

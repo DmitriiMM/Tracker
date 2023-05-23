@@ -88,7 +88,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     private func configRecordInfoSymbol(isDone: Bool) {
-        let image: UIImage = (isDone ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus"))!
+        guard let image: UIImage = (isDone ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus")) else { return }
         plusButton.setImage(image, for: .normal)
         let opacity: Float = isDone ? 0.3 : 1
         plusButton.layer.opacity = opacity

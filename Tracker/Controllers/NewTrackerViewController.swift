@@ -265,7 +265,7 @@ extension NewTrackerViewController: UITableViewDelegate {
         switch indexPath.row {
         case 0: // "Категория"
             guard
-                let categoriesVC = CategoryCoordinator.start(
+                let categoriesVC = CategoriesAssembly().assemble(
                     with: CategoryConfiguration(lastCategory: lastCategory)
                 ) as? CategoriesViewController
             else {
