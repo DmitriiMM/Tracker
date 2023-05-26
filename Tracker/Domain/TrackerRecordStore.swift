@@ -19,12 +19,7 @@ final class TrackerRecordStore: NSObject {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         request.returnsObjectsAsFaults = false
         guard let objects = try? context.fetch(request) else { return [] }
-        var recordsSet: Set<TrackerRecord> = []
-        
-        for i in objects {
-            guard let record = try? makeTrackerRecord(from: i) else { return [] }
-            recordsSet.insert(record)
-        }
+        let recordsSet = Set(objects.compactMap { try? makeTrackerRecord(from: $0) })
         
         return recordsSet
     }
