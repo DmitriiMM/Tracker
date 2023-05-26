@@ -5,8 +5,13 @@ case repeatingTracker
 case onetimeTracker
 }
 
+protocol TypeNewTrackerViewControllerDelegate: AnyObject {
+    func create(newTracker: Tracker?)
+    func create(newCategory: String?)
+}
+
 final class TypeNewTrackerViewController: UIViewController {
-    weak var delegateTransition: ScreenTransitionProtocol?
+    weak var delegate: TypeNewTrackerViewControllerDelegate?
     var categories: [String]?
     
     private lazy var titleLabel: UILabel = {
@@ -56,16 +61,14 @@ final class TypeNewTrackerViewController: UIViewController {
     @objc private func repeatingTrackerButtonTapped() {
         let newTrackerVC = NewTrackerViewController()
         newTrackerVC.typeOfNewTracker = .repeatingTracker
-        newTrackerVC.delegateTransition = self
-        newTrackerVC.categories = categories
+        newTrackerVC.delegate = self
         present(newTrackerVC, animated: true)
     }
     
     @objc private func onetimeTrackerButtonTapped() {
         let newTrackerVC = NewTrackerViewController()
         newTrackerVC.typeOfNewTracker = .onetimeTracker
-        newTrackerVC.delegateTransition = self
-        newTrackerVC.categories = categories
+        newTrackerVC.delegate = self
         present(newTrackerVC, animated: true)
     }
     
@@ -98,9 +101,16 @@ final class TypeNewTrackerViewController: UIViewController {
     }
 }
 
-extension TypeNewTrackerViewController: ScreenTransitionProtocol {
-    func onTransition<T>(value: T, for key: String) {
-        delegateTransition?.onTransition(value: value, for: key)
-        self.dismiss(animated: true)
+extension TypeNewTrackerViewController: NewTrackerViewControllerDelegate {
+    func create(newTracker: Tracker?) {
+        delegate?.create(newTracker: newTracker)
+    }
+    
+    func create(newCategory: String?) {
+        delegate?.create(newCategory: newCategory)
+    }
+    
+    func dismiss() {
+        dismiss(animated: true)
     }
 }
