@@ -103,6 +103,14 @@ final class TrackerStore: NSObject {
         
         try context.save()
     }
+    
+    func deleteAll() throws {
+        let objects = fetchedResultsController.fetchedObjects ?? []
+        for object in objects {
+            context.delete(object)
+        }
+        try context.save()
+    }
 }
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {

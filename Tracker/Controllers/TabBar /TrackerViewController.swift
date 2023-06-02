@@ -41,7 +41,7 @@ final class TrackerViewController: UIViewController {
         return button
     }()
     
-    private lazy var datePicker: UIDatePicker = {
+    lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
@@ -210,6 +210,24 @@ final class TrackerViewController: UIViewController {
         collectionView.reloadData()
         self.newTracker = nil
         self.titleNewCategory = nil
+    }
+    
+    func addNewFixTracker() {
+        let newFixTracker = Tracker(
+            trackerId: UUID(),
+            trackerText: "It's a tracker for screenshot test!",
+            trackerEmoji: "📸",
+            trackerColor: .ypBlue,
+            trackerSchedule: Weekday.allCases
+        )
+        do {
+            try trackerCategoryStore.save(newFixTracker, to: "Test Category")
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        loadTodayTrackers()
+        collectionView.reloadData()
     }
     
     private func addSubviews() {
