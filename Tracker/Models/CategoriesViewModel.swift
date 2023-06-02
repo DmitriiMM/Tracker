@@ -63,7 +63,7 @@ final class CategoriesViewModel {
     
     func deleteCategory(category: TrackerCategory) {
         do {
-            try categoryStore.deleteCategory(with: category)
+            try categoryStore.deleteCategory(category)
             categories = getCategoriesFromStore()
         } catch {
             print(error.localizedDescription)

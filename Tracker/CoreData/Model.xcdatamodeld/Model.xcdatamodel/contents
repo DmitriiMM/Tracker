@@ -11,7 +11,13 @@
         <attribute name="trackerSchedule" optional="YES" attributeType="String"/>
         <attribute name="trackerText" attributeType="String"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData"/>
+        <relationship name="pins" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerPinCoreData" inverseName="tracker" inverseEntity="TrackerPinCoreData"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackerRecordCoreData" inverseName="tracker" inverseEntity="TrackerRecordCoreData"/>
+    </entity>
+    <entity name="TrackerPinCoreData" representedClassName="TrackerPinCoreData" syncable="YES" codeGenerationType="class">
+        <attribute name="exCategory" attributeType="String"/>
+        <attribute name="trackerId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="tracker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCoreData" inverseName="pins" inverseEntity="TrackerCoreData"/>
     </entity>
     <entity name="TrackerRecordCoreData" representedClassName="TrackerRecordCoreData" syncable="YES" codeGenerationType="class">
         <attribute name="trackerRecordDate" attributeType="String"/>
