@@ -117,7 +117,7 @@ extension SupplementaryCollection: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let cell = collectionView.cellForItem(at: indexPath)  as? SuplementaryCollectionCell  {
+        if let cell = collectionView.cellForItem(at: indexPath) as? SuplementaryCollectionCell  {
             
             switch indexPath.section {
             case 0:

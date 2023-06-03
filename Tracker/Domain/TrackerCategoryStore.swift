@@ -83,7 +83,7 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
-    func saveTracker(tracker: Tracker, to categoryName: String) throws {
+    func save(_ tracker: Tracker, to categoryName: String) throws {
         let trackerCoreData = try trackerStore.makeTracker(from: tracker)
         
         if let existingCategory = try? fetchCategory(with: categoryName),
@@ -109,7 +109,7 @@ final class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
-    func deleteCategory(with category: TrackerCategory) throws {
+    func deleteCategory(_ category: TrackerCategory) throws {
         if let category = try fetchCategory(with: category.title) {
             context.delete(category)
         }
@@ -126,7 +126,31 @@ final class TrackerCategoryStore: NSObject {
         try context.save()
         
         guard let category = try? fetchCategories(from: existingCategoryCD) else { return }
-        try deleteCategory(with: category)
+        try deleteCategory(category)
+    }
+    
+    func remove(_ tracker: Tracker, from oldCategoryName: String) throws {
+        if let oldCategory = try? fetchCategory(with: oldCategoryName),
+           let oldCategoryTrackers = oldCategory.trackers,
+           var oldTrackersCoreData = oldCategoryTrackers.allObjects as? [TrackerCoreData] {
+            oldTrackersCoreData.removeAll(where: { $0.trackerId == tracker.trackerId})
+            oldCategory.trackers = NSSet(array: oldTrackersCoreData)
+        }
+        
+        try context.save()
+    }
+    
+    func move(_ tracker: Tracker, to newCategoryName: String) throws {
+        guard let trackerCoreData = try trackerStore.fetchTracker(with: tracker.trackerId) else { return }
+        
+        if let newCategory = try? fetchCategory(with: newCategoryName),
+           let newCategoryTrackers = newCategory.trackers,
+           var newTrackersCoreData = newCategoryTrackers.allObjects as? [TrackerCoreData] {
+            newTrackersCoreData.append(trackerCoreData)
+            newCategory.trackers = NSSet(array: newTrackersCoreData)
+        }
+        
+        try context.save()
     }
 }
 

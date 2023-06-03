@@ -88,6 +88,21 @@ final class TrackerStore: NSObject {
             throw StoreError.decodingErrorInvalidTracker
         }
     }
+    
+    func remove(_ tracker: Tracker) throws {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerCoreData.trackerId),
+            tracker.trackerId.uuidString
+        )
+        let trackers = try context.fetch(request)
+        trackers.forEach { tracker in
+            context.delete(tracker)
+        }
+        
+        try context.save()
+    }
 }
 
 extension TrackerStore: NSFetchedResultsControllerDelegate {

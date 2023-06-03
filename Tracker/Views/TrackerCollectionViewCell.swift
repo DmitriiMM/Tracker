@@ -8,7 +8,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     let identifier = "cell"
     weak var delegate: TrackerCollectionViewCellCounterDelegate?
     
-    private lazy var cellView: UIView = {
+    private lazy var pinImageView: UIImageView = {
+        let image = UIImage(named: "pin")
+        let imageView = UIImageView(image: image)
+        
+        return imageView
+    }()
+    
+    lazy var cellView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "Color5")
         view.layer.cornerRadius = 16
@@ -75,7 +82,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         delegate?.plusButtonTapped(on: self)
     }
     
-    func confugureSubviews(with tracker: Tracker) {
+    func configSubviews(with tracker: Tracker) {
         trackCardLabel.text = tracker.trackerText
         cellView.backgroundColor = tracker.trackerColor
         plusButton.backgroundColor = tracker.trackerColor
@@ -85,6 +92,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     func configRecordInfo(days: Int, isDoneToday: Bool) {
         configRecordInfoText(days: days)
         configRecordInfoSymbol(isDone: isDoneToday)
+    }
+    
+    func configPin(isPinned: Bool) {
+        pinImageView.isHidden = !isPinned
     }
     
     private func configRecordInfoSymbol(isDone: Bool) {
@@ -111,6 +122,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(plusButton)
         cellView.addSubview(emojiLabel)
         cellView.addSubview(trackCardLabel)
+        cellView.addSubview(pinImageView)
     }
     
     private func addConstraints() {
@@ -119,12 +131,16 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         trackCardLabel.translatesAutoresizingMaskIntoConstraints = false
         counterLabel.translatesAutoresizingMaskIntoConstraints = false
         plusButton.translatesAutoresizingMaskIntoConstraints = false
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             cellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             cellView.heightAnchor.constraint(equalToConstant: 90),
+            
+            pinImageView.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -4),
             
             emojiLabel.topAnchor.constraint(equalTo: cellView.topAnchor, constant: 12),
             emojiLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 12),
@@ -134,7 +150,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             trackCardLabel.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 12),
             trackCardLabel.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -12),
             trackCardLabel.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: -12),
-            trackCardLabel.heightAnchor.constraint(equalToConstant: 24),
             trackCardLabel.widthAnchor.constraint(equalToConstant: 24),
             
             plusButton.topAnchor.constraint(equalTo: cellView.bottomAnchor, constant: 8),

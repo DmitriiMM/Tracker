@@ -3,14 +3,14 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    let firstStartAppStorage = FirstStartAppStorage()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         
-        if !UserDefaults.standard.bool(forKey: "hasShownOnboarding") {
-            UserDefaults.standard.set(true, forKey: "hasShownOnboarding")
+        if !firstStartAppStorage.getIsFirstStartApp() {
+            firstStartAppStorage.setIsFirstStartApp()
             let onboardingViewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
             window.rootViewController = onboardingViewController
         } else {

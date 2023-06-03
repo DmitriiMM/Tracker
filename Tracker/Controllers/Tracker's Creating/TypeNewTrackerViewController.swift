@@ -8,6 +8,7 @@ case onetimeTracker
 protocol TypeNewTrackerViewControllerDelegate: AnyObject {
     func create(newTracker: Tracker?)
     func create(newCategory: String?)
+    func editTracker()
 }
 
 final class TypeNewTrackerViewController: UIViewController {
@@ -59,14 +60,14 @@ final class TypeNewTrackerViewController: UIViewController {
     }
     
     @objc private func repeatingTrackerButtonTapped() {
-        let newTrackerVC = NewTrackerViewController()
+        let newTrackerVC = NewTrackerViewController(isEditTracker: false)
         newTrackerVC.typeOfNewTracker = .repeatingTracker
         newTrackerVC.delegate = self
         present(newTrackerVC, animated: true)
     }
     
     @objc private func onetimeTrackerButtonTapped() {
-        let newTrackerVC = NewTrackerViewController()
+        let newTrackerVC = NewTrackerViewController(isEditTracker: false)
         newTrackerVC.typeOfNewTracker = .onetimeTracker
         newTrackerVC.delegate = self
         present(newTrackerVC, animated: true)
@@ -102,6 +103,10 @@ final class TypeNewTrackerViewController: UIViewController {
 }
 
 extension TypeNewTrackerViewController: NewTrackerViewControllerDelegate {
+    func editTracker() {
+        delegate?.editTracker()
+    }
+    
     func create(newTracker: Tracker?) {
         delegate?.create(newTracker: newTracker)
     }
