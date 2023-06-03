@@ -152,7 +152,13 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        collection.register(SuplementaryCollectionCell.self, forCellWithReuseIdentifier: SuplementaryCollectionCell().identifier)
+        collection.delegate = helper
+        collection.dataSource = helper
         collection.backgroundColor = .ypWhite
+        collection.isScrollEnabled = false
+        
         return collection
     }()
     
@@ -171,18 +177,12 @@ final class NewTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        
-        collectionView.register(SuplementaryCollectionCell.self, forCellWithReuseIdentifier: SuplementaryCollectionCell().identifier)
-        
         switch typeOfNewTracker {
         case .repeatingTracker: heightTableView = 149
         case .onetimeTracker: heightTableView = 74
         case .none: break
         }
         
-        collectionView.delegate = helper
-        collectionView.dataSource = helper
         helper.delegate = self
         
         view.backgroundColor = .ypWhite
@@ -196,10 +196,6 @@ final class NewTrackerViewController: UIViewController {
         guard let trackerEmoji, let trackerColor else { return }
         highlightCell(emoji: trackerEmoji)
         highlightCell(color: trackerColor)
-    }
-    
-    private func generateTrackerId() -> UUID {
-        return UUID()
     }
     
     @objc private func cancelButtonTapped() {
@@ -282,7 +278,7 @@ final class NewTrackerViewController: UIViewController {
             delegate?.editTracker()
         } else {
             let newTracker = Tracker(
-                trackerId: generateTrackerId(),
+                trackerId: UUID(),
                 trackerText: trackerText,
                 trackerEmoji: trackerEmoji,
                 trackerColor: trackerColor,
@@ -335,7 +331,10 @@ final class NewTrackerViewController: UIViewController {
     
     private func configEditDaysLabel() {
         if let recordsCount = recordsCount {
-            editDaysLabel.text = String(recordsCount) + " " + "дней"
+            editDaysLabel.text = String.localizedStringWithFormat(
+                NSLocalizedString("numberOfDays", comment: "Number of tracked days"),
+                recordsCount
+            )
         }
     }
     

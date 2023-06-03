@@ -7,4 +7,11 @@ class DateHelper {
         dateFormatter.timeStyle = .none
         return dateFormatter
     }()
+    
+    let dateFormatterFromString: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        
+        return dateFormatter
+    }()
 }

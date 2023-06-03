@@ -43,6 +43,9 @@ final class StatisticView: UIView {
     
     init(cardTypeStatistic: Statistic) {
         self.cardTypeStatistic = cardTypeStatistic
+      
+        cardDescription = cardTypeStatistic.name
+        cardCounter = StatisticStorage().getStatisticCount(for: cardTypeStatistic)
         super.init(frame: UIScreen.main.bounds)
         
         addSubviews()

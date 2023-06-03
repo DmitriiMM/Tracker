@@ -8,6 +8,7 @@ final class OnboardingViewController: UIViewController {
         let image = UIImage(named: String(page.index))
         imageView.image = image
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
         
         return imageView
     }()

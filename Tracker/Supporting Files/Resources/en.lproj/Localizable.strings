@@ -1,0 +1,23 @@
+"trackers" = Trackers;
+"search" = Search;
+"zerotrackers" = "What will we track?";
+"foundZeroTrackers" = "Nothing found";
+
+"pinned" = "Pinned";
+"pin" = "Pin";
+"unpin" = "Unpin";
+"edit" = "Edit";
+"delete" = "Delete";
+
+"filters" = Filters;
+"allTrackers" = "All trackers";
+"todayTrackers" = "Trackers for today";
+"finishedTrackers" = "Completed trackers";
+"unfinishedTrackers" = "Not completed trackers";
+
+"statistics" = Statistics;
+"bestPeriod" = "Best period";
+"perfectDays" = "Perfect days";
+"finishedTrackersCount" = "Trackers completed";
+"averageValue" = "Average value";
+"emptyStatistic" = "Nothing to analyze";

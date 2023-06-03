@@ -1,4 +1,5 @@
 import UIKit
+import YandexMobileMetrica
 
 final class TrackerViewController: UIViewController {
     private var currentDate = String()
@@ -13,7 +14,8 @@ final class TrackerViewController: UIViewController {
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerPinStore = TrackerPinStore()
     private let trackerStore = TrackerStore()
-    private let pinnedCategoryName = "Закрепленные"
+    private let pinnedCategoryName = NSLocalizedString("pinned", comment: "Name of pinned category")
+    private let analyticsService = AnalyticsService()
     
     private lazy var topBar: UIView = {
         let view = UIView()
@@ -25,7 +27,7 @@ final class TrackerViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers", comment: "Title of trackers vc")
         label.textColor = .ypBlack
         
         return label
@@ -41,7 +43,7 @@ final class TrackerViewController: UIViewController {
         return button
     }()
     
-    private lazy var datePicker: UIDatePicker = {
+    lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
@@ -55,7 +57,7 @@ final class TrackerViewController: UIViewController {
     private lazy var searchField: UISearchBar = {
         let search = UISearchBar()
         search.barTintColor = .ypWhite
-        search.placeholder = "Поиск"
+        search.placeholder = NSLocalizedString("search", comment: "SearBar placeholder")
         search.delegate = self
         search.searchBarStyle = .minimal
         
@@ -68,6 +70,11 @@ final class TrackerViewController: UIViewController {
             collectionViewLayout: UICollectionViewFlowLayout()
         )
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell().identifier)
+        collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        collectionView.backgroundColor = .ypWhite
+        collectionView.allowsMultipleSelection = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
         
         return collectionView
     }()
@@ -82,7 +89,7 @@ final class TrackerViewController: UIViewController {
     private lazy var emptyCollectionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("zeroTrackers", comment: "Title for empty tracker vc")
         label.textColor = .ypBlack
         label.textAlignment = .center
         
@@ -93,7 +100,7 @@ final class TrackerViewController: UIViewController {
         let button = UIButton(type: .system)
         button.backgroundColor = .ypBlue
         button.layer.cornerRadius = 16
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(NSLocalizedString("filters", comment: "Title on button to filtering trackers"), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.regular, withSize: 17)
         button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
@@ -106,14 +113,6 @@ final class TrackerViewController: UIViewController {
         
         view.backgroundColor = .ypWhite
         
-        collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-
-        collectionView.backgroundColor = .ypWhite
-        collectionView.allowsMultipleSelection = false
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
         addSubviews()
         addConstraints()
         
@@ -121,6 +120,15 @@ final class TrackerViewController: UIViewController {
       
         loadTodayTrackers()
         completedTrackers = trackerRecordStore.records
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        analyticsService.report(event: "open", params: ["screen" : "Main"])
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        analyticsService.report(event: "close", params: ["screen" : "Main"])
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -154,12 +162,16 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func addTrackerButtonTapped() {
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "add_track"])
+        
         let typeNewTrackerVC = TypeNewTrackerViewController()
         typeNewTrackerVC.delegate = self
         present(typeNewTrackerVC, animated: true)
     }
     
     @objc private func filterButtonTapped() {
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "filter"])
+        
         let filterVC = FilterViewController()
         filterVC.delegate = self
         present(filterVC, animated: true)
@@ -204,6 +216,24 @@ final class TrackerViewController: UIViewController {
         collectionView.reloadData()
         self.newTracker = nil
         self.titleNewCategory = nil
+    }
+    
+    func addNewFixTracker() {
+        let newFixTracker = Tracker(
+            trackerId: UUID(),
+            trackerText: "It's a tracker for screenshot test!",
+            trackerEmoji: "📸",
+            trackerColor: .ypBlue,
+            trackerSchedule: Weekday.allCases
+        )
+        do {
+            try trackerCategoryStore.save(newFixTracker, to: "Test Category")
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        loadTodayTrackers()
+        collectionView.reloadData()
     }
     
     private func addSubviews() {
@@ -295,7 +325,7 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
                     }
                     
                     if filteredTrackers.isEmpty {
-                        emptyCollectionLabel.text = "Ничего не найдено"
+                        emptyCollectionLabel.text = NSLocalizedString("foundZeroTrackers", comment: "Title if found 0 trackers")
                         emptyCollectionImageView.image = UIImage(named: "emptySearch")
                         emptyCollectionLabel.isHidden = false
                         emptyCollectionImageView.isHidden = false
@@ -349,6 +379,8 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
 
 extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
     func plusButtonTapped(on cell: TrackerCollectionViewCell) {
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "track"])
+        
         let indexPath: IndexPath = collectionView.indexPath(for: cell) ?? IndexPath()
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let id = tracker.trackerId
@@ -437,17 +469,21 @@ extension TrackerViewController: UICollectionViewDelegate {
         guard let indexPath = indexPaths.first else { return nil }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let isPinned = trackerPinStore.pinnedTrackers.contains { $0.trackerId == tracker.trackerId }
-        let titlePinAction = isPinned ? "Открепить" : "Закрепить"
+        let titlePinAction = isPinned
+        ? NSLocalizedString("unpin", comment: "Tracker contextual menu")
+        : NSLocalizedString("pin", comment: "Tracker contextual menu")
         
         let context = UIContextMenuConfiguration(identifier: indexPath as NSCopying, actionProvider: { actions in
             return UIMenu(children: [
                 UIAction(title: titlePinAction) { [weak self] _ in
                     self?.fixTracker(at: indexPath)
                 },
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: NSLocalizedString("edit", comment: "Tracker contextual menu")) { [weak self] _ in
+                    self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.editTracker(at: indexPath)
                 },
-                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                UIAction(title: NSLocalizedString("delete", comment: "Tracker contextual menu"), attributes: .destructive) { [weak self] _ in
+                    self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.deleteTracker(at: indexPath)
                 },
             ])
