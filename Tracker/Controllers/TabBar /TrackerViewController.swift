@@ -8,7 +8,7 @@ final class TrackerViewController: UIViewController {
     private var memoryTrackerByСategory: [TrackerCategory] = []
     private var searchText = ""
     private var completedTrackers: Set<TrackerRecord>? = []
-    private let statisticStorage = StatisticStorage()
+    private let statisticStorage = StatisticStorage.shared
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerPinStore = TrackerPinStore()
@@ -121,12 +121,6 @@ final class TrackerViewController: UIViewController {
       
         loadTodayTrackers()
         completedTrackers = trackerRecordStore.records
-        
-        
-        print("🔴\(trackerStore.trackers)")
-        print("🟠\(trackerCategoryStore.categories)")
-        print("🟡\(trackerRecordStore.records)")
-        print("🟢\(trackerPinStore.pinnedTrackers)")
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {

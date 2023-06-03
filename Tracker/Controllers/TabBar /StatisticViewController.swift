@@ -1,6 +1,8 @@
 import UIKit
 
 final class StatisticViewController: UIViewController {
+    private let statisticStorage = StatisticStorage.shared
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
@@ -57,24 +59,25 @@ final class StatisticViewController: UIViewController {
         
         addSubviews()
         addConstraints()
-        showStatistic()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         configStatistic()
+        showStatistic()
     }
     
     private func configStatistic() {
         for view in cardsStackView.subviews {
             if let card = view as? StatisticView {
-                card.updateView()
+                let counterValue = statisticStorage.getStatisticCount(for: card.cardTypeStatistic)
+                card.updateView(with: counterValue)
             }
         }
     }
     
     private func showStatistic() {
         for type in Statistic.allCases {
-            if UserDefaults.standard.integer(forKey: type.rawValue) != 0 {
+            if statisticStorage.getStatisticCount(for: type) != 0 {
                 emptyStatisticImageView.isHidden = true
                 emptyStatisticLabel.isHidden = true
                 cardsStackView.isHidden = false
