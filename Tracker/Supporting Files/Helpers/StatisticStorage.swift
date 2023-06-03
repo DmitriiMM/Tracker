@@ -21,6 +21,7 @@ enum Statistic: String, CaseIterable {
 }
 
 final class StatisticStorage {
+    static let shared = StatisticStorage()
     private let userDefaults = UserDefaults.standard
     
     func getStatisticCount(for statistic: Statistic) -> Int {

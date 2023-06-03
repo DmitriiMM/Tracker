@@ -1,9 +1,7 @@
 import UIKit
 
 final class StatisticView: UIView {
-    private let cardTypeStatistic: Statistic
-    private var cardCounter: Int
-    private var cardDescription: String
+    let cardTypeStatistic: Statistic
     
     private let backLayer: CAGradientLayer = {
         let layer = CAGradientLayer()
@@ -29,7 +27,6 @@ final class StatisticView: UIView {
     private lazy var cardCounterLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
-        label.text = String(cardCounter)
         label.textColor = .ypBlack
         
         return label
@@ -38,7 +35,7 @@ final class StatisticView: UIView {
     private lazy var cardDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = cardDescription
+        label.text = cardTypeStatistic.rawValue
         label.textColor = .ypBlack
         
         return label
@@ -46,6 +43,7 @@ final class StatisticView: UIView {
     
     init(cardTypeStatistic: Statistic) {
         self.cardTypeStatistic = cardTypeStatistic
+      
         cardDescription = cardTypeStatistic.name
         cardCounter = StatisticStorage().getStatisticCount(for: cardTypeStatistic)
         super.init(frame: UIScreen.main.bounds)
@@ -58,9 +56,9 @@ final class StatisticView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateView() {
-        cardCounter = StatisticStorage().getStatisticCount(for: cardTypeStatistic)
-        cardCounterLabel.text = String(cardCounter)
+    func updateView(with counterValue: Int) {
+        cardCounterLabel.text = counterValue != 0 ? String(counterValue) : "—"
+
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

@@ -9,7 +9,7 @@ final class TrackerViewController: UIViewController {
     private var memoryTrackerByСategory: [TrackerCategory] = []
     private var searchText = ""
     private var completedTrackers: Set<TrackerRecord>? = []
-    private let statisticStorage = StatisticStorage()
+    private let statisticStorage = StatisticStorage.shared
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerPinStore = TrackerPinStore()
@@ -129,7 +129,6 @@ final class TrackerViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         analyticsService.report(event: "close", params: ["screen" : "Main"])
-        
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {

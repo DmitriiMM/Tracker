@@ -14,6 +14,7 @@ final class NewTrackerViewController: UIViewController {
     private var trackerSchedule: [Weekday]?
     private var recordsCount: Int?
     private var editingTracker: Tracker?
+    private let statisticStorage = StatisticStorage.shared
     
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
@@ -251,6 +252,11 @@ final class NewTrackerViewController: UIViewController {
            
         case .none: break
         }
+        
+        statisticStorage.setStatisticCount(
+            for: .finishedTrackersCount,
+            count: Set(trackerRecordStore.records.map { $0.trackerId }).count
+        )
         
         dismiss(animated: true)
     }
