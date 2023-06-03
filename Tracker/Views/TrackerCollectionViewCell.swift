@@ -106,14 +106,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     private func configRecordInfoText(days: Int) {
-        switch days % 10 {
-        case 1:
-            counterLabel.text = "\(days) день"
-        case 2...4:
-            counterLabel.text = "\(days) дня"
-        default:
-            counterLabel.text = "\(days) дней"
-        }
+        counterLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfDays", comment: "Number of tracked days"),
+            days
+        )
     }
     
     private func addSubviews() {

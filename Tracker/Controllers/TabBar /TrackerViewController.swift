@@ -25,7 +25,7 @@ final class TrackerViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers", comment: "Title of trackers vc")
         label.textColor = .ypBlack
         
         return label
@@ -93,7 +93,7 @@ final class TrackerViewController: UIViewController {
         let button = UIButton(type: .system)
         button.backgroundColor = .ypBlue
         button.layer.cornerRadius = 16
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(NSLocalizedString("filters", comment: "Title on button to filtering trackers"), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.regular, withSize: 17)
         button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
