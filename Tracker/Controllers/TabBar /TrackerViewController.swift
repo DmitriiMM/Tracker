@@ -1,4 +1,5 @@
 import UIKit
+import YandexMobileMetrica
 
 final class TrackerViewController: UIViewController {
     private var currentDate = String()
@@ -14,6 +15,7 @@ final class TrackerViewController: UIViewController {
     private let trackerPinStore = TrackerPinStore()
     private let trackerStore = TrackerStore()
     private let pinnedCategoryName = "Закрепленные"
+    private let analyticsService = AnalyticsService()
     
     private lazy var topBar: UIView = {
         let view = UIView()
@@ -129,6 +131,16 @@ final class TrackerViewController: UIViewController {
         print("🟢\(trackerPinStore.pinnedTrackers)")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        analyticsService.report(event: "open", params: ["screen" : "Main"])
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        analyticsService.report(event: "close", params: ["screen" : "Main"])
+        
+    }
+    
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let weekday = sender.calendar.component(.weekday, from: sender.date)
         
@@ -160,12 +172,16 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func addTrackerButtonTapped() {
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "add_track"])
+        
         let typeNewTrackerVC = TypeNewTrackerViewController()
         typeNewTrackerVC.delegate = self
         present(typeNewTrackerVC, animated: true)
     }
     
     @objc private func filterButtonTapped() {
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "filter"])
+        
         let filterVC = FilterViewController()
         filterVC.delegate = self
         present(filterVC, animated: true)
@@ -373,6 +389,8 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
 
 extension TrackerViewController: TrackerCollectionViewCellCounterDelegate {
     func plusButtonTapped(on cell: TrackerCollectionViewCell) {
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "track"])
+        
         let indexPath: IndexPath = collectionView.indexPath(for: cell) ?? IndexPath()
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let id = tracker.trackerId
@@ -469,9 +487,11 @@ extension TrackerViewController: UICollectionViewDelegate {
                     self?.fixTracker(at: indexPath)
                 },
                 UIAction(title: "Редактировать") { [weak self] _ in
+                    self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.editTracker(at: indexPath)
                 },
                 UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                    self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.deleteTracker(at: indexPath)
                 },
             ])

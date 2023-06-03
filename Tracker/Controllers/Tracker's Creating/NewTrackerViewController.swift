@@ -152,6 +152,8 @@ final class NewTrackerViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collection.backgroundColor = .ypWhite
+        collection.isScrollEnabled = false
+        
         return collection
     }()
     
