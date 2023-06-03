@@ -108,7 +108,7 @@ final class CategoriesViewController: UIViewController {
             AlertPresenter().show(controller: self, model: alertModel)
         }
         
-        if let categories = viewModel.categories?.filter({ $0.title != "Закрепленные" }),
+        if let categories = viewModel.categories?.filter({ $0.title != NSLocalizedString("pinned", comment: "Name of pinned category") }),
             categories.count != 0 {
            heightTableView = categories.count * 75 - 1
            emptyCategoryLabel.isHidden = true
@@ -209,7 +209,7 @@ extension CategoriesViewController: UITableViewDelegate {
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return viewModel.categories?.filter({ $0.title != "Закрепленные" }).count ?? 0
+        return viewModel.categories?.filter({ $0.title != NSLocalizedString("pinned", comment: "Name of pinned category") }).count ?? 0
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -220,7 +220,7 @@ extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell"),
-            let categories = viewModel.categories?.filter({ $0.title != "Закрепленные" })
+            let categories = viewModel.categories?.filter({ $0.title != NSLocalizedString("pinned", comment: "Name of pinned category") })
         else {
             return UITableViewCell()
         }

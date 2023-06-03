@@ -14,7 +14,7 @@ final class TrackerViewController: UIViewController {
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerPinStore = TrackerPinStore()
     private let trackerStore = TrackerStore()
-    private let pinnedCategoryName = "Закрепленные"
+    private let pinnedCategoryName = NSLocalizedString("pinned", comment: "Name of pinned category")
     private let analyticsService = AnalyticsService()
     
     private lazy var topBar: UIView = {
@@ -57,7 +57,7 @@ final class TrackerViewController: UIViewController {
     private lazy var searchField: UISearchBar = {
         let search = UISearchBar()
         search.barTintColor = .ypWhite
-        search.placeholder = "Поиск"
+        search.placeholder = NSLocalizedString("search", comment: "SearBar placeholder")
         search.delegate = self
         search.searchBarStyle = .minimal
         
@@ -70,6 +70,11 @@ final class TrackerViewController: UIViewController {
             collectionViewLayout: UICollectionViewFlowLayout()
         )
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell().identifier)
+        collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        collectionView.backgroundColor = .ypWhite
+        collectionView.allowsMultipleSelection = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
         
         return collectionView
     }()
@@ -84,7 +89,7 @@ final class TrackerViewController: UIViewController {
     private lazy var emptyCollectionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("zeroTrackers", comment: "Title for empty tracker vc")
         label.textColor = .ypBlack
         label.textAlignment = .center
         
@@ -108,14 +113,6 @@ final class TrackerViewController: UIViewController {
         
         view.backgroundColor = .ypWhite
         
-        collectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-
-        collectionView.backgroundColor = .ypWhite
-        collectionView.allowsMultipleSelection = false
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
         addSubviews()
         addConstraints()
         
@@ -123,12 +120,6 @@ final class TrackerViewController: UIViewController {
       
         loadTodayTrackers()
         completedTrackers = trackerRecordStore.records
-        
-        
-        print("🔴\(trackerStore.trackers)")
-        print("🟠\(trackerCategoryStore.categories)")
-        print("🟡\(trackerRecordStore.records)")
-        print("🟢\(trackerPinStore.pinnedTrackers)")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -335,7 +326,7 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
                     }
                     
                     if filteredTrackers.isEmpty {
-                        emptyCollectionLabel.text = "Ничего не найдено"
+                        emptyCollectionLabel.text = NSLocalizedString("foundZeroTrackers", comment: "Title if found 0 trackers")
                         emptyCollectionImageView.image = UIImage(named: "emptySearch")
                         emptyCollectionLabel.isHidden = false
                         emptyCollectionImageView.isHidden = false
@@ -479,18 +470,20 @@ extension TrackerViewController: UICollectionViewDelegate {
         guard let indexPath = indexPaths.first else { return nil }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let isPinned = trackerPinStore.pinnedTrackers.contains { $0.trackerId == tracker.trackerId }
-        let titlePinAction = isPinned ? "Открепить" : "Закрепить"
+        let titlePinAction = isPinned
+        ? NSLocalizedString("unpin", comment: "Tracker contextual menu")
+        : NSLocalizedString("pin", comment: "Tracker contextual menu")
         
         let context = UIContextMenuConfiguration(identifier: indexPath as NSCopying, actionProvider: { actions in
             return UIMenu(children: [
                 UIAction(title: titlePinAction) { [weak self] _ in
                     self?.fixTracker(at: indexPath)
                 },
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: NSLocalizedString("edit", comment: "Tracker contextual menu")) { [weak self] _ in
                     self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.editTracker(at: indexPath)
                 },
-                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                UIAction(title: NSLocalizedString("delete", comment: "Tracker contextual menu"), attributes: .destructive) { [weak self] _ in
                     self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.deleteTracker(at: indexPath)
                 },

@@ -17,7 +17,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     lazy var cellView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(named: "Color5")
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
         
@@ -29,7 +28,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         label.backgroundColor = .white.withAlphaComponent(0.3)
         label.layer.cornerRadius = 12
         label.clipsToBounds = true
-        label.text = "🥑"
         label.textAlignment = .center
         label.font = .appFont(.medium, withSize: 13)
         
@@ -41,7 +39,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         label.numberOfLines = 2
         label.font = UIFont.appFont(.medium, withSize: 12)
         label.textColor = .white
-        label.text = "Поливать растения"
         
         return label
     }()
@@ -51,7 +48,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.appFont(.medium, withSize: 12)
         label.textColor = .ypBlack
-        label.text = "1 день"
         
         return label
     }()

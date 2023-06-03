@@ -9,13 +9,13 @@ enum Filters: Int, CaseIterable {
     var filterName: String {
         switch self {
         case .allTrackers:
-            return "Все трекеры"
+            return NSLocalizedString("allTrackers", comment: "Trackers filter option")
         case .todayTrackers:
-            return "Трекеры на сегодня"
+            return NSLocalizedString("todayTrackers", comment: "Trackers filter option")
         case .finishedTrackers:
-            return "Завершенные"
+            return NSLocalizedString("finishedTrackers", comment: "Trackers filter option")
         case .unfinishedTrackers:
-            return "Не завершенные"
+            return NSLocalizedString("unfinishedTrackers", comment: "Trackers filter option")
         }
     }
 }
@@ -31,7 +31,7 @@ final class FilterViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
         label.textColor = .ypBlack
-        label.text = "Фильтры"
+        label.text = NSLocalizedString("filters", comment: "Title filter ViewController")
         
         return label
     }()
