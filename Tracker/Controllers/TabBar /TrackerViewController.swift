@@ -75,6 +75,7 @@ final class TrackerViewController: UIViewController {
         collectionView.allowsMultipleSelection = false
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
         
         return collectionView
     }()
@@ -112,6 +113,7 @@ final class TrackerViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhite
+        view.addKeyboardHidingFeature()
         
         addSubviews()
         addConstraints()

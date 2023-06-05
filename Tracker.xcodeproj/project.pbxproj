@@ -20,6 +20,7 @@
 		A32F0EB82A1C08FB003564B9 /* Pages.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32F0EB72A1C08FB003564B9 /* Pages.swift */; };
 		A33081FC2A12846A0076C1C3 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33081FB2A12846A0076C1C3 /* AlertPresenter.swift */; };
 		A33081FE2A1294100076C1C3 /* CategoriesAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33081FD2A1294100076C1C3 /* CategoriesAssembly.swift */; };
+		A3343A5F2A2E522C0096DB29 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3343A5E2A2E522C0096DB29 /* UIView+Extensions.swift */; };
 		A334C62229CF040700484BAA /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62129CF040700484BAA /* TabBarController.swift */; };
 		A334C62429CF09D000484BAA /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62329CF09D000484BAA /* StatisticViewController.swift */; };
 		A334C62629CF179B00484BAA /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A334C62529CF179B00484BAA /* UIColor+Extension.swift */; };
@@ -90,6 +91,7 @@
 		A32F0EB72A1C08FB003564B9 /* Pages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pages.swift; sourceTree = "<group>"; };
 		A33081FB2A12846A0076C1C3 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		A33081FD2A1294100076C1C3 /* CategoriesAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesAssembly.swift; sourceTree = "<group>"; };
+		A3343A5E2A2E522C0096DB29 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		A334C62129CF040700484BAA /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		A334C62329CF09D000484BAA /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		A334C62529CF179B00484BAA /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				A33081FD2A1294100076C1C3 /* CategoriesAssembly.swift */,
 				A36EB6F82A2927A800017C23 /* StatisticStorage.swift */,
 				A36EB6FA2A2A270B00017C23 /* FirstStartAppStorage.swift */,
+				A3343A5E2A2E522C0096DB29 /* UIView+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				A3E7ED132A213FA6005D708C /* TrackerPin.swift in Sources */,
 				A334C62229CF040700484BAA /* TabBarController.swift in Sources */,
 				A37BF99D29F04B010000A3CF /* DateHelper.swift in Sources */,
+				A3343A5F2A2E522C0096DB29 /* UIView+Extensions.swift in Sources */,
 				A37BF99729E9ABD80000A3CF /* StoresErrors.swift in Sources */,
 				A37BF99529E9AB470000A3CF /* TrackerCategoryStore.swift in Sources */,
 				A34EB28E29D0E92900A0E475 /* SuplementaryCollection.swift in Sources */,

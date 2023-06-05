@@ -1,6 +1,6 @@
 "trackers" = Trackers;
 "search" = Search;
-"zerotrackers" = "What will we track?";
+"zeroTrackers" = "What will we track?";
 "foundZeroTrackers" = "Nothing found";
 
 "pinned" = "Pinned";

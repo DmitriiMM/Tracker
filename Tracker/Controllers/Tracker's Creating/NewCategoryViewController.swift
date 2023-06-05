@@ -49,8 +49,9 @@ final class NewCategoryViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhite
-        textField.delegate = self
+        view.addKeyboardHidingFeature()
         
+        textField.delegate = self
         textField.text = editingCategory?.title
         
         addSubviews()

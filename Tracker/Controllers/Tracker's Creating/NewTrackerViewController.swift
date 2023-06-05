@@ -46,11 +46,12 @@ final class NewTrackerViewController: UIViewController {
         let scroll = UIScrollView()
         scroll.backgroundColor = .ypWhite
         scroll.frame = view.bounds
+        scroll.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
         
         return scroll
     }()
     
-    private lazy var stackView: UIStackView = {
+    private lazy var editRecordStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .center
@@ -105,6 +106,28 @@ final class NewTrackerViewController: UIViewController {
         textField.text = trackerText
         
         return textField
+    }()
+    
+    private lazy var errorLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.appFont(.regular, withSize: 17)
+        label.textColor = .ypRed
+        label.text = "Ограничение 38 символов"
+        label.isHidden = true
+        
+        return label
+    }()
+    
+    private lazy var textFieldStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 8
+        stackView.addArrangedSubview(textField)
+        stackView.addArrangedSubview(errorLabel)
+
+        return stackView
     }()
     
     private lazy var tableView: UITableView = {
@@ -186,6 +209,7 @@ final class NewTrackerViewController: UIViewController {
         helper.delegate = self
         
         view.backgroundColor = .ypWhite
+        view.addKeyboardHidingFeature()
         
         addSubviews()
         addConstraints()
@@ -235,6 +259,7 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let trackerText = trackerText,
+              trackerText != "",
               let category = lastCategory,
               let trackerEmoji = trackerEmoji,
               let trackerColor = trackerColor
@@ -262,7 +287,6 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func createNewTracker(trackerText: String, category: String, trackerSchedule: [Weekday]?, trackerEmoji: String, trackerColor: UIColor) {
-        guard trackerText != "" else { return }
         if isEditTracker {
             guard let editingTracker else { return }
             let tracker = Tracker(
@@ -293,11 +317,12 @@ final class NewTrackerViewController: UIViewController {
     private func makeCreateButtonEnabled() {
         switch typeOfNewTracker {
         case .repeatingTracker:
-            if trackerText == trackerText &&
-                lastCategory == lastCategory &&
-                trackerSchedule == trackerSchedule &&
-                trackerEmoji == trackerEmoji &&
-                trackerColor == trackerColor {
+            if trackerText != nil &&
+                trackerText != "" &&
+                lastCategory != nil &&
+                trackerSchedule != nil &&
+                trackerEmoji != nil &&
+                trackerColor != nil {
                 createButton.backgroundColor = .ypBlack
                 createButton.setTitleColor(.ypWhite, for: .normal)
             } else {
@@ -305,10 +330,11 @@ final class NewTrackerViewController: UIViewController {
                 createButton.setTitleColor(.white, for: .normal)
             }
         case .onetimeTracker:
-            if trackerText == trackerText &&
-                lastCategory == lastCategory &&
-                trackerEmoji == trackerEmoji &&
-                trackerColor == trackerColor {
+            if trackerText != nil &&
+                trackerText != "" &&
+                lastCategory != nil &&
+                trackerEmoji != nil &&
+                trackerColor != nil {
                 createButton.backgroundColor = .ypBlack
                 createButton.setTitleColor(.ypWhite, for: .normal)
             } else {
@@ -363,17 +389,17 @@ final class NewTrackerViewController: UIViewController {
     private func addSubviews() {
         view.addSubview(titleLabel)
         view.addSubview(scrollView)
-        scrollView.addSubview(textField)
+        scrollView.addSubview(textFieldStackView)
         scrollView.addSubview(tableView)
         scrollView.addSubview(collectionView)
         scrollView.addSubview(cancelButton)
         scrollView.addSubview(createButton)
         
         if isEditTracker {
-            stackView.addArrangedSubview(minusDaysButton)
-            stackView.addArrangedSubview(editDaysLabel)
-            stackView.addArrangedSubview(plusDaysButton)
-            scrollView.addSubview(stackView)
+            editRecordStackView.addArrangedSubview(minusDaysButton)
+            editRecordStackView.addArrangedSubview(editDaysLabel)
+            editRecordStackView.addArrangedSubview(plusDaysButton)
+            scrollView.addSubview(editRecordStackView)
         }
     }
     
@@ -381,7 +407,7 @@ final class NewTrackerViewController: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        textField.translatesAutoresizingMaskIntoConstraints = false
+        textFieldStackView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
@@ -390,15 +416,15 @@ final class NewTrackerViewController: UIViewController {
         minusDaysButton.translatesAutoresizingMaskIntoConstraints = false
         editDaysLabel.translatesAutoresizingMaskIntoConstraints = false
         plusDaysButton.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        editRecordStackView.translatesAutoresizingMaskIntoConstraints = false
         
         if isEditTracker {
-            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
-            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 26).isActive = true
-            stackView.bottomAnchor.constraint(equalTo: textField.topAnchor, constant: -42).isActive = true
-            textField.topAnchor.constraint(equalTo: textField.topAnchor).isActive = true
+            editRecordStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
+            editRecordStackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 26).isActive = true
+            editRecordStackView.bottomAnchor.constraint(equalTo: textFieldStackView.topAnchor, constant: -42).isActive = true
+            textFieldStackView.topAnchor.constraint(equalTo: textFieldStackView.topAnchor).isActive = true
         } else {
-            textField.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+            textFieldStackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
         }
         
         NSLayoutConstraint.activate([
@@ -409,22 +435,22 @@ final class NewTrackerViewController: UIViewController {
             scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 24),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            textField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            textFieldStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            textFieldStackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             textField.heightAnchor.constraint(equalToConstant: 75),
             textField.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -32),
             
-            tableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: textField.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: textField.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: textFieldStackView.bottomAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: textFieldStackView.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: textFieldStackView.trailingAnchor),
             tableView.heightAnchor.constraint(equalToConstant: CGFloat(heightTableView)),
             
             collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
             collectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 484),
+            collectionView.heightAnchor.constraint(equalToConstant: view.frame.width * 1.2),
             
-            createButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor),
+            createButton.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 46),
             
             cancelButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: -4),
@@ -517,27 +543,35 @@ extension NewTrackerViewController: UITableViewDataSource {
 
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
         trackerText = textField.text
-        textField.resignFirstResponder()
-        return true
+        makeCreateButtonEnabled()
+        return false
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
+        self.view.endEditing(true)
+        trackerText = textField.text
+        makeCreateButtonEnabled()
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if range.location == 0 && string == " " {
             return false
-        } else if textField.text?.isEmpty == true && !string.isEmpty {
-            trackerText = textField.text
-            
         }
         
-        makeCreateButtonEnabled()
-        return true
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField.text?.isEmpty == true {
-            trackerText = textField.text
+        guard let currentText = textField.text,
+              let stringRange = Range(range, in: currentText)
+        else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        if updatedText.count >= 38 {
+            errorLabel.isHidden = false
+        } else {
+            errorLabel.isHidden = true
         }
+        
+        return updatedText.count <= 38
     }
 }
 
