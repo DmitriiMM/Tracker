@@ -6,14 +6,14 @@ final class TabBarController: UITabBarController {
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("trackers", comment: "Name of first screen in tabBar"),
+            title: "TRACKERS".localized,
             image: UIImage(systemName: "record.circle.fill"),
             selectedImage: UIImage(systemName: "record.circle.fill")
         )
         
         let statisticViewController = StatisticViewController()
         statisticViewController.tabBarItem = UITabBarItem(
-            title: NSLocalizedString("statistics", comment: "Name of second screen in tabBar"),
+            title: "STATISTICS".localized,
             image: UIImage(systemName: "hare.fill"),
             selectedImage: UIImage(systemName: "hare.fill")
         )

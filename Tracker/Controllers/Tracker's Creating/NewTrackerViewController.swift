@@ -33,9 +33,13 @@ final class NewTrackerViewController: UIViewController {
         label.textColor = .ypBlack
         switch typeOfNewTracker {
         case .repeatingTracker:
-            label.text = isEditTracker ? "Редактирование привычки" : "Новая привычка"
+            label.text = isEditTracker
+            ? "EDIT_TRACKER_REGULAR".localized
+            : "NEW_TRACKER_REGULAR".localized
         case .onetimeTracker:
-            label.text = isEditTracker ? "Редактирование нерегулярного события" : "Новое нерегулярное событие"
+            label.text = isEditTracker
+            ? "EDIT_TRACKER_IRREGULAR".localized
+            : "NEW_TRACKER_IRREGULAR".localized
         case .none: break
         }
         
@@ -94,7 +98,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = "ENTER_NAME_TRACKER".localized
         textField.clearButtonMode = .whileEditing
         let leftInsetView = UIView(frame: CGRect(x: 0, y: 0, width: 17, height: 30))
         textField.leftView = leftInsetView
@@ -112,7 +116,7 @@ final class NewTrackerViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.appFont(.regular, withSize: 17)
         label.textColor = .ypRed
-        label.text = "Ограничение 38 символов"
+        label.text = "LIMIT_TRACKER_NAME".localized
         label.isHidden = true
         
         return label
@@ -147,7 +151,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle("CANCEL".localized, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypWhite
@@ -162,7 +166,7 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle("CREATE".localized, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypGray
@@ -514,13 +518,13 @@ extension NewTrackerViewController: UITableViewDataSource {
         
         switch indexPath.row {
         case 0:
-            cell.textLabel?.text = "Категория"
+            cell.textLabel?.text = "CATEGORY".localized
             cell.detailTextLabel?.text = lastCategory
             
         case 1:
-            cell.textLabel?.text = "Расписание"
+            cell.textLabel?.text = "SCHEDULE".localized
             if trackerSchedule == Weekday.allCases {
-                cell.detailTextLabel?.text = "Каждый день"
+                cell.detailTextLabel?.text = "EVERYDAY".localized
             } else {
                 if let trackerSchedule = trackerSchedule {
                     cell.detailTextLabel?.text = trackerSchedule

@@ -16,7 +16,7 @@ final class PageViewController: UIPageViewController {
     
     private lazy var onboardingButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle("ONBOARDING_BUTTON".localized, for: .normal)
         button.titleLabel?.textColor = .white
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.tintColor = .white

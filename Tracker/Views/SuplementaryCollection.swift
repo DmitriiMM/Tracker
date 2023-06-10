@@ -68,9 +68,9 @@ extension SupplementaryCollection: UICollectionViewDataSource {
         
         switch indexPath.section {
         case 0:
-            view.titleLabel.text = "Emoji"
+            view.titleLabel.text = "EMOJI".localized
         case 1:
-            view.titleLabel.text = "Colors"
+            view.titleLabel.text = "COLORS".localized
         default:
             break
         }

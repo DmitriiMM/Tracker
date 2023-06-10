@@ -1,23 +1,74 @@
-"trackers" = Trackers;
-"search" = Search;
-"zeroTrackers" = "What will we track?";
-"foundZeroTrackers" = "Nothing found";
+//MARK: - ONBOARDING VC
+"ONBOARDING_BUTTON" = "Wow, amazing technologies!";
+"ONBOARDING_FIRST_TITLE" = "Track only what you want";
+"ONBOARDING_SECOND_TITLE" = "Even if it's not liters of water and yoga";
 
-"pinned" = "Pinned";
-"pin" = "Pin";
-"unpin" = "Unpin";
-"edit" = "Edit";
-"delete" = "Delete";
+//MARK: - TRACKER VC
+"TRACKERS" = "Trackers";
+"SEARCH" = "Search";
+"WHAT_TO_MONITOR" = "What will we track?";
+"NOT_FOUND" = "Nothing found";
+"PINNED" = "Pinned";
+"PIN" = "Pin";
+"UNPIN" = "Unpin";
+"ACCESS_TO_DELETE_TRACKER" = "Are you sure you want to delete the tracker?";
 
-"filters" = Filters;
-"allTrackers" = "All trackers";
-"todayTrackers" = "Trackers for today";
-"finishedTrackers" = "Completed trackers";
-"unfinishedTrackers" = "Not completed trackers";
+//MARK: - FILTER ACTIVITY
+"FILTERS" = "Filters";
+"ALL_TRACKERS" = "All trackers";
+"TODAY_TRACKERS" = "Trackers for today";
+"FINISHED_TRACKERS" = "Completed trackers";
+"UNFINISHED_TRACKERS" = "Not completed trackers";
 
-"statistics" = Statistics;
-"bestPeriod" = "Best period";
-"perfectDays" = "Perfect days";
-"finishedTrackersCount" = "Trackers completed";
-"averageValue" = "Average value";
-"emptyStatistic" = "Nothing to analyze";
+//MARK: - STATISTICS VC
+"STATISTICS" = "Statistics";
+"BEST_PERIOD" = "Best period";
+"PERFECT_DAYS" = "Perfect days";
+"FINISHED_TRACKERS_COUNT" = "Trackers completed";
+"AVERAGE_VALUE" = "Average value";
+"EMPTY_STATISTICS" = "Nothing to analyze";
+
+//MARK: - TYPE ADD/EDIT TRACKER VCs
+"TRACKER_CREATION" = "Creating a tracker";
+"TRACKER_CREATION_REGULAR" = "Habit";
+"TRACKER_CREATION_IRREGULAR" = "Irregular event";
+
+//MARK: - ADD/EDIT TRACKER VCs
+"NEW_TRACKER_REGULAR" = "New habit";
+"EDIT_TRACKER_REGULAR" = "Editing a habit";
+"NEW_TRACKER_IRREGULAR" = "New irregular event";
+"EDIT_TRACKER_IRREGULAR" = "Editing an irregular event";
+
+"ENTER_NAME_TRACKER" = "Enter tracker name";
+"LIMIT_TRACKER_NAME" = "38 character limit";
+"CATEGORY" = "Category";
+    "ZERO_CATEGORIES" = "Habits and events can be combined in meaning";
+    "ADD_CATEGORY" = "Add category";
+        "ACCESS_TO_DELETE_CATEGORY" = "Is this category really necessary?";
+        "NEW_CATEGORY" = "New category";
+        "ENTER_CATEGORY_NAME" = "Enter category name";
+"SCHEDULE" = "Schedule";
+    "MONDAY" = "Monday";
+    "TUESDAY" = "Tuesday";
+    "WEDNESDAY" = "Wednesday";
+    "THURSDAY" = "Thursday";
+    "FRIDAY" = "Friday";
+    "SATURDAY" = "Saturday";
+    "SUNDAY" = "Sunday";
+"EVERYDAY" = "Every day";
+"MONDAY_SHORT" = "Mo";
+"TUESDAY_SHORT" = "Tu";
+"WEDNESDAY_SHORT" = "We";
+"THURSDAY_SHORT" = "Th";
+"FRIDAY_SHORT" = "Fr";
+"SATURDAY_SHORT" = "Sa";
+"SUNDAY_SHORT" = "Su";
+"EMOJI" = "Emoji";
+"COLORS" = "Colors";
+
+//MARK: - BUTTONS
+"CANCEL" = "Cancel";
+"CREATE" = "Create";
+"DONE" = "Done";
+"EDIT" = "Edit";
+"DELETE" = "Delete";

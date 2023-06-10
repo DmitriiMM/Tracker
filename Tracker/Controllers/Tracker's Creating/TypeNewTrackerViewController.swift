@@ -19,14 +19,14 @@ final class TypeNewTrackerViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
         label.textColor = .ypBlack
-        label.text = "Создание трекера"
+        label.text = "TRACKER_CREATION".localized
         
         return label
     }()
     
     private lazy var repeatingTrackerButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle("TRACKER_CREATION_REGULAR".localized, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypBlack
@@ -39,7 +39,7 @@ final class TypeNewTrackerViewController: UIViewController {
     
     private lazy var onetimeTrackerButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Нерегулярные событие", for: .normal)
+        button.setTitle("TRACKER_CREATION_IRREGULAR".localized, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypBlack

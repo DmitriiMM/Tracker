@@ -6,7 +6,7 @@ final class StatisticViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
-        label.text = NSLocalizedString("statistics", comment: "Title of statistics vc")
+        label.text = "STATISTICS".localized
         label.textColor = .ypBlack
         
         return label
@@ -23,7 +23,7 @@ final class StatisticViewController: UIViewController {
     private lazy var emptyStatisticLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = NSLocalizedString("emptyStatistic", comment: "Title for empty statistic vc")
+        label.text = "EMPTY_STATISTICS".localized
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.isHidden = true

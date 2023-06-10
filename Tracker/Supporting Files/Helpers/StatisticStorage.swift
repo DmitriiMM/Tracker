@@ -9,13 +9,13 @@ enum Statistic: String, CaseIterable {
     var name: String {
         switch self {
         case .bestPeriod:
-            return NSLocalizedString("bestPeriod", comment: "Statistics option")
+            return "BEST_PERIOD".localized
         case .perfectDays:
-            return NSLocalizedString("perfectDays", comment: "Statistics option")
+            return "PERFECT_DAYS".localized
         case .finishedTrackersCount:
-            return NSLocalizedString("finishedTrackersCount", comment: "Statistics option")
+            return "FINISHED_TRACKERS_COUNT".localized
         case .averageValue:
-            return NSLocalizedString("averageValue", comment: "Statistics option")
+            return "AVERAGE_VALUE".localized
         }
     }
 }

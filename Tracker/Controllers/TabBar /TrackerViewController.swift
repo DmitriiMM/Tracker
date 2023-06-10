@@ -14,7 +14,7 @@ final class TrackerViewController: UIViewController {
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerPinStore = TrackerPinStore()
     private let trackerStore = TrackerStore()
-    private let pinnedCategoryName = NSLocalizedString("pinned", comment: "Name of pinned category")
+    private let pinnedCategoryName = "PINNED".localized
     private let analyticsService = AnalyticsService()
     
     private lazy var topBar: UIView = {
@@ -27,7 +27,7 @@ final class TrackerViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
-        label.text = NSLocalizedString("trackers", comment: "Title of trackers vc")
+        label.text = "TRACKERS".localized
         label.textColor = .ypBlack
         
         return label
@@ -47,7 +47,6 @@ final class TrackerViewController: UIViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
-        picker.locale = Locale(identifier: "ru_RU")
         picker.calendar.firstWeekday = 2
         picker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         
@@ -57,7 +56,7 @@ final class TrackerViewController: UIViewController {
     private lazy var searchField: UISearchBar = {
         let search = UISearchBar()
         search.barTintColor = .ypWhite
-        search.placeholder = NSLocalizedString("search", comment: "SearBar placeholder")
+        search.placeholder = "SEARCH".localized
         search.delegate = self
         search.searchBarStyle = .minimal
         
@@ -90,7 +89,7 @@ final class TrackerViewController: UIViewController {
     private lazy var emptyCollectionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = NSLocalizedString("zeroTrackers", comment: "Title for empty tracker vc")
+        label.text = "WHAT_TO_MONITOR".localized
         label.textColor = .ypBlack
         label.textAlignment = .center
         
@@ -101,7 +100,7 @@ final class TrackerViewController: UIViewController {
         let button = UIButton(type: .system)
         button.backgroundColor = .ypBlue
         button.layer.cornerRadius = 16
-        button.setTitle(NSLocalizedString("filters", comment: "Title on button to filtering trackers"), for: .normal)
+        button.setTitle("FILTERS".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.regular, withSize: 17)
         button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
@@ -149,7 +148,7 @@ final class TrackerViewController: UIViewController {
             if category.title != pinnedCategoryName {
                 let filterTrackers = category.trackers.filter { tracker in
                     tracker.trackerSchedule?.contains { schedule in
-                        schedule.rawValue == day.rawValue
+                        schedule.fullName == day.fullName
                     } ?? false
                 }
                 let filterCategory = TrackerCategory(title: category.title, trackers: filterTrackers)
@@ -327,7 +326,7 @@ extension TrackerViewController: UISearchBarDelegate, UITextFieldDelegate {
                     }
                     
                     if filteredTrackers.isEmpty {
-                        emptyCollectionLabel.text = NSLocalizedString("foundZeroTrackers", comment: "Title if found 0 trackers")
+                        emptyCollectionLabel.text = "NOT_FOUND".localized
                         emptyCollectionImageView.image = UIImage(named: "emptySearch")
                         emptyCollectionLabel.isHidden = false
                         emptyCollectionImageView.isHidden = false
@@ -472,19 +471,19 @@ extension TrackerViewController: UICollectionViewDelegate {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let isPinned = trackerPinStore.pinnedTrackers.contains { $0.trackerId == tracker.trackerId }
         let titlePinAction = isPinned
-        ? NSLocalizedString("unpin", comment: "Tracker contextual menu")
-        : NSLocalizedString("pin", comment: "Tracker contextual menu")
+        ? "UNPIN".localized
+        : "PIN".localized
         
         let context = UIContextMenuConfiguration(identifier: indexPath as NSCopying, actionProvider: { actions in
             return UIMenu(children: [
                 UIAction(title: titlePinAction) { [weak self] _ in
                     self?.fixTracker(at: indexPath)
                 },
-                UIAction(title: NSLocalizedString("edit", comment: "Tracker contextual menu")) { [weak self] _ in
+                UIAction(title: "EDIT".localized) { [weak self] _ in
                     self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.editTracker(at: indexPath)
                 },
-                UIAction(title: NSLocalizedString("delete", comment: "Tracker contextual menu"), attributes: .destructive) { [weak self] _ in
+                UIAction(title: "DELETE".localized, attributes: .destructive) { [weak self] _ in
                     self?.analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "edit"])
                     self?.deleteTracker(at: indexPath)
                 },
@@ -597,8 +596,8 @@ extension TrackerViewController: UICollectionViewDelegate {
         
         let alertModel = AlertModel(
             title: nil,
-            message: "Уверены что хотите удалить трекер?",
-            buttonText: "Удалить",
+            message: "ACCESS_TO_DELETE_TRACKER".localized,
+            buttonText: "DELETE".localized,
             completion: { [weak self] _ in
                 guard let self else { return }
                 try? self.trackerCategoryStore.remove(tracker, from: categoryName)
@@ -618,7 +617,7 @@ extension TrackerViewController: UICollectionViewDelegate {
                 else { return }
                 try? self.trackerPinStore.remove(pin)
             },
-            cancelText: "Отменить",
+            cancelText: "CANCEL".localized,
             cancelCompletion: nil
         )
         

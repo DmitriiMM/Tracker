@@ -7,9 +7,9 @@ enum Pages: CaseIterable {
     var title: String {
         switch self {
         case .pageZero:
-            return "Отслеживайте только то, что хотите"
+            return "ONBOARDING_FIRST_TITLE".localized
         case .pageOne:
-            return "Даже если это не литры воды и йога"
+            return "ONBOARDING_SECOND_TITLE".localized
         }
     }
     

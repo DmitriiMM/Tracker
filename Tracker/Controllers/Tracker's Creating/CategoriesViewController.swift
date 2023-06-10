@@ -15,7 +15,7 @@ final class CategoriesViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
         label.textColor = .ypBlack
-        label.text = "Категория"
+        label.text = "CATEGORY".localized
         
         return label
     }()
@@ -30,7 +30,7 @@ final class CategoriesViewController: UIViewController {
     private lazy var emptyCategoryLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = "ZERO_CATEGORIES".localized
         label.numberOfLines = 2
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -56,7 +56,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle("ADD_CATEGORY".localized, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypBlack
@@ -108,7 +108,7 @@ final class CategoriesViewController: UIViewController {
             AlertPresenter().show(controller: self, model: alertModel)
         }
         
-        if let categories = viewModel.categories?.filter({ $0.title != NSLocalizedString("pinned", comment: "Name of pinned category") }),
+        if let categories = viewModel.categories?.filter({ $0.title != "PINNED".localized }),
             categories.count != 0 {
            heightTableView = categories.count * 75 - 1
            emptyCategoryLabel.isHidden = true
@@ -195,10 +195,10 @@ extension CategoriesViewController: UITableViewDelegate {
         
         return UIContextMenuConfiguration(actionProvider:  { _ in
             UIMenu(children: [
-                UIAction(title: "Редактировать") { [weak self] _ in
+                UIAction(title: "EDIT".localized) { [weak self] _ in
                     self?.editCategory(category)
                 },
-                UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                UIAction(title: "DELETE".localized, attributes: .destructive) { [weak self] _ in
                     self?.viewModel.showAlertToDelete(category)
                 }
             ])
@@ -209,7 +209,7 @@ extension CategoriesViewController: UITableViewDelegate {
 extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return viewModel.categories?.filter({ $0.title != NSLocalizedString("pinned", comment: "Name of pinned category") }).count ?? 0
+        return viewModel.categories?.filter({ $0.title != "PINNED".localized }).count ?? 0
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -220,7 +220,7 @@ extension CategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell"),
-            let categories = viewModel.categories?.filter({ $0.title != NSLocalizedString("pinned", comment: "Name of pinned category") })
+            let categories = viewModel.categories?.filter({ $0.title != "PINNED".localized })
         else {
             return UITableViewCell()
         }
