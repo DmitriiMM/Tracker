@@ -35,7 +35,7 @@ final class StatisticView: UIView {
     private lazy var cardDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = cardTypeStatistic.rawValue
+        label.text = cardTypeStatistic.name
         label.textColor = .ypBlack
         
         return label
@@ -43,6 +43,7 @@ final class StatisticView: UIView {
     
     init(cardTypeStatistic: Statistic) {
         self.cardTypeStatistic = cardTypeStatistic
+        
         super.init(frame: UIScreen.main.bounds)
         
         addSubviews()

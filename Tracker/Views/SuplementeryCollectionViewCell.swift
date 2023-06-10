@@ -5,7 +5,6 @@ final class SuplementaryCollectionCell: UICollectionViewCell {
     lazy var label: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 32)
-        label.text = ":)"
 
         return label
     }()

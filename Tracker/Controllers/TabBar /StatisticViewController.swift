@@ -2,11 +2,11 @@ import UIKit
 
 final class StatisticViewController: UIViewController {
     private let statisticStorage = StatisticStorage.shared
-    
+  
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.bold, withSize: 34)
-        label.text = "Статистика"
+        label.text = "STATISTICS".localized
         label.textColor = .ypBlack
         
         return label
@@ -23,7 +23,7 @@ final class StatisticViewController: UIViewController {
     private lazy var emptyStatisticLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 12)
-        label.text = "Анализировать пока нечего"
+        label.text = "EMPTY_STATISTICS".localized
         label.textColor = .ypBlack
         label.textAlignment = .center
         label.isHidden = true

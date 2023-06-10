@@ -1,30 +1,49 @@
 import UIKit
 
-enum Weekday: String, CaseIterable {
-    case monday = "Понедельник"
-    case tuesday = "Вторник"
-    case wednesday = "Среда"
-    case thursday = "Четверг"
-    case friday = "Пятница"
-    case saturday = "Суббота"
-    case sunday = "Воскресенье"
-
+enum Weekday: CaseIterable {
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
+    
     var shortName: String {
         switch self {
         case .monday:
-            return "Пн"
+            return "MONDAY_SHORT".localized
         case .tuesday:
-            return "Вт"
+            return "TUESDAY_SHORT".localized
         case .wednesday:
-            return "Ср"
+            return "WEDNESDAY_SHORT".localized
         case .thursday:
-            return "Чт"
+            return "THURSDAY_SHORT".localized
         case .friday:
-            return "Пт"
+            return "FRIDAY_SHORT".localized
         case .saturday:
-            return "Сб"
+            return "SATURDAY_SHORT".localized
         case .sunday:
-            return "Вс"
+            return "SUNDAY_SHORT".localized
+        }
+    }
+
+    var fullName: String {
+        switch self {
+        case .monday:
+            return "MONDAY".localized
+        case .tuesday:
+            return "TUESDAY".localized
+        case .wednesday:
+            return "WEDNESDAY".localized
+        case .thursday:
+            return "THURSDAY".localized
+        case .friday:
+            return "FRIDAY".localized
+        case .saturday:
+            return "SATURDAY".localized
+        case .sunday:
+            return "SUNDAY".localized
         }
     }
     
@@ -62,7 +81,7 @@ final class ScheduleViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
         label.textColor = .ypBlack
-        label.text = "Расписание"
+        label.text = "SCHEDULE".localized
         
         return label
     }()
@@ -84,7 +103,7 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("DONE".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypGray
@@ -158,7 +177,7 @@ extension ScheduleViewController: UITableViewDataSource {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
         cell.backgroundColor = .ypBackground
-        cell.textLabel?.text = days[indexPath.row].rawValue
+        cell.textLabel?.text = days[indexPath.row].fullName
         cell.textLabel?.font = UIFont.appFont(.regular, withSize: 17)
         cell.accessoryView = switcher
         

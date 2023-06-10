@@ -13,14 +13,14 @@ final class NewCategoryViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.appFont(.medium, withSize: 16)
         label.textColor = .ypBlack
-        label.text = "Новая категория"
+        label.text = "NEW_CATEGORY".localized
         
         return label
     }()
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = "ENTER_CATEGORY_NAME".localized
         let leftInsetView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))
         textField.leftView = leftInsetView
         textField.leftViewMode = .always
@@ -34,7 +34,7 @@ final class NewCategoryViewController: UIViewController {
    
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("DONE".localized, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.appFont(.medium, withSize: 16)
         button.backgroundColor = .ypGray
@@ -49,8 +49,9 @@ final class NewCategoryViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypWhite
-        textField.delegate = self
+        view.addKeyboardHidingFeature()
         
+        textField.delegate = self
         textField.text = editingCategory?.title
         
         addSubviews()

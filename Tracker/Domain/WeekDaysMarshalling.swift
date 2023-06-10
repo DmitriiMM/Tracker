@@ -7,18 +7,20 @@ final class WeekDaysMarshalling {
         var result = ""
         for day in weekdays {
             if days.contains(day) {
-                result += day.rawValue + ","
+                result += day.fullName + ","
             }
         }
         return result
     }
     
     func convertStringToWeekDays(_ string: String?) -> [Weekday] {
-        var result = [Weekday]()
-        if let string = string {
-            let weekdays = string.components(separatedBy: ",")
-            result = weekdays.compactMap { Weekday(rawValue: $0) }
+        guard let string = string else { return [] }
+        
+        let weekdays = string.components(separatedBy: ",")
+        let result = weekdays.compactMap { dayString in
+            Weekday.allCases.first { $0.fullName == dayString }
         }
+        
         return result
     }
 }
